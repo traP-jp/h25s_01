@@ -54,7 +54,7 @@ jobs:
       contents: read
       packages: write
     env:
-      CAN_PUSH: ${{ github.event_name != 'pull_request' && github.actor == github.repository_owner }}
+      CAN_PUSH: ${{ github.event_name != 'pull_request' }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up Docker Buildx
