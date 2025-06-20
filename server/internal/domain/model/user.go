@@ -20,6 +20,7 @@ func NewUser(name, email string) *User {
 	if err != nil {
 		panic("failed to generate UUID: " + err.Error())
 	}
+
 	return &User{
 		Id:        id,
 		Name:      name,

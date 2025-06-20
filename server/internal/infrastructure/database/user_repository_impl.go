@@ -85,6 +85,7 @@ func (r *UserRepositoryImpl) GetById(ctx context.Context, id uuid.UUID) (*model.
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, fmt.Errorf("user not found")
 		}
+
 		return nil, fmt.Errorf("failed to get user: %w", err)
 	}
 
