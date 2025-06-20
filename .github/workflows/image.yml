@@ -26,7 +26,7 @@ jobs:
         uses: docker/metadata-action@v5
         id: meta
         with:
-          images: ghcr.io/${{ github.repository }}/client
+          images: ghcr.io/${{ github.repository }}-client
       - name: Login to GitHub Container Registry
         if: env.CAN_PUSH
         uses: docker/login-action@v3
@@ -57,7 +57,7 @@ jobs:
         uses: docker/metadata-action@v5
         id: meta
         with:
-          images: ghcr.io/${{ github.repository }}/server
+          images: ghcr.io/${{ github.repository }}-server
       - name: Login to GitHub Container Registry
         if: env.CAN_PUSH
         uses: docker/login-action@v3
