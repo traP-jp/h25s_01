@@ -7,7 +7,7 @@ import (
 )
 
 type User struct {
-	Id        uuid.UUID
+	ID        uuid.UUID
 	Name      string
 	Email     string
 	CreatedAt time.Time
@@ -22,7 +22,7 @@ func NewUser(name, email string) *User {
 	}
 
 	return &User{
-		Id:        id,
+		ID:        id,
 		Name:      name,
 		Email:     email,
 		CreatedAt: now,

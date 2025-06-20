@@ -15,7 +15,7 @@ import (
 )
 
 type UserDto struct {
-	Id        string    `db:"id"`
+	ID        string    `db:"id"`
 	Name      string    `db:"name"`
 	Email     string    `db:"email"`
 	CreatedAt time.Time `db:"created_at"`
@@ -23,13 +23,13 @@ type UserDto struct {
 }
 
 func (dto *UserDto) ToModel() (*model.User, error) {
-	id, err := uuid.Parse(dto.Id)
+	id, err := uuid.Parse(dto.ID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse UUID: %w", err)
 	}
 
 	return &model.User{
-		Id:        id,
+		ID:        id,
 		Name:      dto.Name,
 		Email:     dto.Email,
 		CreatedAt: dto.CreatedAt,
@@ -38,7 +38,7 @@ func (dto *UserDto) ToModel() (*model.User, error) {
 }
 
 func (dto *UserDto) FromModel(user *model.User) {
-	dto.Id = user.Id.String()
+	dto.ID = user.ID.String()
 	dto.Name = user.Name
 	dto.Email = user.Email
 	dto.CreatedAt = user.CreatedAt
@@ -72,7 +72,7 @@ func (r *UserRepositoryImpl) Create(ctx context.Context, user *model.User) error
 	return nil
 }
 
-func (r *UserRepositoryImpl) GetById(ctx context.Context, id uuid.UUID) (*model.User, error) {
+func (r *UserRepositoryImpl) GetByID(ctx context.Context, id uuid.UUID) (*model.User, error) {
 	query := `
 		SELECT *
 		FROM users
