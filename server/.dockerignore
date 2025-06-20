@@ -1,7 +1,6 @@
-*
-!cmd/
-!integration_tests/
-!internal/
-!pkg/
-!go.mod
-!go.sum
+/.env
+/tmp/
+/bin/
+
+/go.work
+/go.work.sum
