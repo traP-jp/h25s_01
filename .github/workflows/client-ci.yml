@@ -1,0 +1,65 @@
+name: Client CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "client/**"
+  pull_request:
+    paths:
+      - "client/**"
+  workflow_dispatch:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./client
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/Jod
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./client
+    needs: ci
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/Jod
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Build check
+        run: npm run build
+
+  lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./client
+    needs:
+      - ci
+      - build
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/Jod
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Run ESLint
+        run: npm run lint
