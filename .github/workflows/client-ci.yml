@@ -9,6 +9,7 @@ on:
   pull_request:
     paths:
       - "client/**"
+  workflow_dispatch:
 
 permissions:
   contents: read
