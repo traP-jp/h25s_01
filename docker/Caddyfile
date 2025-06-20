@@ -1,0 +1,9 @@
+:80 {
+    handle /api* {
+        reverse_proxy server:8080
+    }
+    
+    handle {
+        reverse_proxy client:80
+    }
+}
