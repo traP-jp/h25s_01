@@ -9,7 +9,9 @@
         :thickness="3"
       />
 
-      <Showcase class="pt-4" />
+      <div class="pl-4">
+        <Showcase class="pt-4" />
+      </div>
     </v-container>
   </div>
 </template>

@@ -3,10 +3,11 @@
     class="pt-2 pb-2"
     direction="horizontal"
     :items="items"
+    style="-ms-overflow-style: none; scrollbar-width: none"
     @load="load"
   >
     <template v-for="item in items" :key="item">
-      <div class="pl-1 pr-1">
+      <div class="pr-1">
         <v-card class="mx-auto" color="surface-variant" max-width="340">
           <v-img
             class="align-end"
