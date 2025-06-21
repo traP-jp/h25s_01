@@ -396,6 +396,17 @@ paths:
           schema:
             type: integer
           description: 取得開始位置
+        - name: after
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: before
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: 指定日時以降のレビューを取得
         - name: shop_id
           in: query
           schema:
@@ -453,69 +464,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Review"
-
-  /api/v1/shops/{shop_id}/reviews:
-    parameters:
-      - name: shop_id
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
-        description: 店舗ID
-    get:
-      tags:
-        - reviews
-      summary: 店舗別レビュー取得
-      description: 指定された店舗のレビュー一覧を取得
-      parameters:
-        - name: limit
-          in: query
-          schema:
-            type: integer
-          description: 取得件数制限
-      responses:
-        "200":
-          description: 店舗のレビュー一覧
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Review"
-        "404":
-          description: 店舗が見つかりません
-
-  /api/v1/users/{user_id}/reviews:
-    parameters:
-      - name: user_id
-        in: path
-        required: true
-        schema:
-          type: string
-        description: ユーザーID
-    get:
-      tags:
-        - reviews
-      summary: ユーザー別レビュー取得
-      description: 指定されたユーザーのレビュー一覧を取得
-      parameters:
-        - name: limit
-          in: query
-          schema:
-            type: integer
-          description: 取得件数制限
-      responses:
-        "200":
-          description: ユーザーのレビュー一覧
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Review"
-        "404":
-          description: ユーザーが見つかりません
 
   /api/v1/reviews/{id}:
     parameters:
@@ -609,27 +557,6 @@ paths:
                     type: string
         "404":
           description: レビューが見つかりません
-    delete:
-      tags:
-        - reviews
-      summary: レビュー画像削除
-      description: 指定されたレビューの画像を削除
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                image_url:
-                  type: string
-              required:
-                - image_url
-      responses:
-        "204":
-          description: 画像の削除に成功
-        "404":
-          description: レビューまたは画像が見つかりません
 
 components:
   schemas:
