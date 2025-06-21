@@ -32,8 +32,12 @@ func NewRouter(userHandler *handler.UserHandler) *echo.Echo {
 			users.GET("/:id", userHandler.GetUser)
 			users.DELETE("/:id", userHandler.DeleteUser)
 		}
-	}
 
+		stations := api.Group("/stations")
+		{
+			stations.GET("/:id", StationHandler.GetStations)
+		}
+	}
 	return e
 }
 
