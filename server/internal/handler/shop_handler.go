@@ -390,3 +390,28 @@ func (h *ShopHandler) CreateShop(c echo.Context) error {
 
 	return c.JSON(http.StatusCreated, FromModelToShop(shop))
 }
+
+func (h *ShopHandler) DeletePicture(c echo.Context) error {
+	shopID := c.Param("id")
+	uuidShopID, err := uuid.Parse(shopID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "Invalid shop ID format",
+		})
+	}
+	shop, err := h.shopRepo.FindByID(c.Request().Context(), uuidShopID)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": err.Error(),
+		})
+	}
+	if shop == nil {
+		return c.JSON(http.StatusNotFound, map[string]string{
+			"error": "Shop not found",
+		})
+	}
+	for _, img := range shop.Images {
+		h.fileRepo.DeleteImage(c.Request().Context(), img.ID)
+	}
+}
