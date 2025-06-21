@@ -3,11 +3,12 @@ package handler
 import (
 	"backend/internal/domain/model"
 	"backend/internal/domain/repository"
-	"github.com/google/uuid"
-	"github.com/labstack/echo/v4"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/labstack/echo/v4"
 )
 
 const maxContentLength = 1024
@@ -328,7 +329,7 @@ func (h *ReviewHandler) UploadImage(c echo.Context) error {
 		return errorResponse(c, http.StatusForbidden, err.Error())
 	}
 
-	FileID, err := h.fileRepo.UploadImage(reviewID, contentType, file)
+	FileID, err := h.fileRepo.UploadImage(contentType, file)
 	if err != nil {
 		return errorResponse(c, http.StatusInternalServerError, "Failed to save image file")
 	}

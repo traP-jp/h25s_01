@@ -1,11 +1,9 @@
 package file
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"io"
-	"path/filepath"
 
 	"backend/internal/domain/repository"
 	"backend/pkg/config"
@@ -73,23 +71,16 @@ func NewFileRepository() (repository.FileRepository, error) {
 	}, nil
 }
 
-func (r *RepositoryImpl) UploadImage(reviewID uuid.UUID, contentType string, reader io.Reader) (uuid.UUID, error) {
+func (r *RepositoryImpl) UploadImage(contentType string, reader io.Reader) (uuid.UUID, error) {
 	fileID := uuid.New()
 
-	// S3のキーを生成 (reviews/{reviewID}/{fileID})
-	key := fmt.Sprintf("reviews/%s/%s", reviewID.String(), fileID.String())
-
-	// io.Readerからバイトデータを読み取り
-	data, err := io.ReadAll(reader)
-	if err != nil {
-		return uuid.Nil, fmt.Errorf("failed to read data: %w", err)
-	}
+	key := fileID.String()
 
 	// S3にアップロード
-	_, err = r.s3Client.PutObject(context.TODO(), &s3.PutObjectInput{
+	_, err := r.s3Client.PutObject(context.TODO(), &s3.PutObjectInput{
 		Bucket:      aws.String(r.bucket),
 		Key:         aws.String(key),
-		Body:        bytes.NewReader(data),
+		Body:        reader,
 		ContentType: aws.String(contentType),
 	})
 	if err != nil {
@@ -99,48 +90,10 @@ func (r *RepositoryImpl) UploadImage(reviewID uuid.UUID, contentType string, rea
 	return fileID, nil
 }
 
-func (r *RepositoryImpl) DeleteImage(fileID uuid.UUID) error {
-	// ファイルIDからS3オブジェクトを検索して削除
-	// reviews/配下の全てのディレクトリでファイルIDに一致するオブジェクトを探す
-	prefix := "reviews/"
-
-	listInput := &s3.ListObjectsV2Input{
+func (r *RepositoryImpl) DeleteImage(fileID uuid.UUID) error { // S3からオブジェクトを削除
+	_, err := r.s3Client.DeleteObject(context.TODO(), &s3.DeleteObjectInput{
 		Bucket: aws.String(r.bucket),
-		Prefix: aws.String(prefix),
-	}
-
-	result, err := r.s3Client.ListObjectsV2(context.TODO(), listInput)
-	if err != nil {
-		return fmt.Errorf("failed to list objects in S3: %w", err)
-	}
-
-	var keyToDelete *string
-	targetFileID := fileID.String()
-
-	// オブジェクトリストから該当するファイルを探す
-	for _, obj := range result.Contents {
-		if obj.Key == nil {
-			continue
-		}
-
-		// ファイル名がファイルIDと一致するかチェック
-		fileName := filepath.Base(*obj.Key)
-
-		if fileName == targetFileID {
-			keyToDelete = obj.Key
-
-			break
-		}
-	}
-
-	if keyToDelete == nil {
-		return fmt.Errorf("file not found: %s", fileID.String())
-	}
-
-	// S3からオブジェクトを削除
-	_, err = r.s3Client.DeleteObject(context.TODO(), &s3.DeleteObjectInput{
-		Bucket: aws.String(r.bucket),
-		Key:    keyToDelete,
+		Key:    aws.String(fileID.String()),
 	})
 	if err != nil {
 		return fmt.Errorf("failed to delete object from S3: %w", err)
