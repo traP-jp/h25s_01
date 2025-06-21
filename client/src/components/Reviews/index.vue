@@ -1,7 +1,8 @@
 <template>
-  <div class="pl-2">
-    <v-container>
+  <div style="max-width: 100%">
+    <div class="ml-auto mr-auto pl-4 pr-4" style="max-width: 500px">
       <p class="text-primary">Timeline</p>
+
       <v-divider
         class="border-opacity-100 rounded-pill"
         color="primary"
@@ -9,15 +10,13 @@
         :thickness="3"
       />
 
-      <div class="pl-4">
-        <Timeline class="pt-4" />
-      </div>
-    </v-container>
+      <Detail class="pt-4 ml-3 mr-3" />
+    </div>
   </div>
 </template>
 
 <script setup>
-  import Timeline from './TimelineDetail.vue'
+  import Detail from './detail.vue'
 </script>
 
 <style lang="sass"></style>

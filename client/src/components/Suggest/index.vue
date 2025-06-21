@@ -9,7 +9,7 @@
         :thickness="3"
       />
 
-      <div class="pl-4">
+      <div class="pl-0 pr-0">
         <Showcase class="pt-4" />
       </div>
     </v-container>
@@ -17,7 +17,7 @@
 </template>
 
 <script setup>
-  import Showcase from './showcase.vue'
+  import Showcase from './detail.vue'
 </script>
 
 <style lang="sass"></style>

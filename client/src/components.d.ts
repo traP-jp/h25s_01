@@ -10,14 +10,14 @@ declare module 'vue' {
   export interface GlobalComponents {
     AppFooter: typeof import('./components/AppFooter.vue')['default']
     AppHeader: typeof import('./components/AppHeader.vue')['default']
+    Detail: typeof import('./components/Reviews/detail.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
-    List: typeof import('./components/Timeline/suggest/showcase.vue')['default']
+    Reviews: typeof import('./components/Reviews/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SearchSlot: typeof import('./components/SearchSlot.vue')['default']
-    Showcase: typeof import('./components/Suggest/showcase.vue')['default']
+    Showcase: typeof import('./components/Suggest/detail.vue')['default']
     Suggest: typeof import('./components/Suggest/index.vue')['default']
     Timeline: typeof import('./components/Timeline/index.vue')['default']
-    TimelineDetail: typeof import('./components/Timeline/TimelineDetail.vue')['default']
   }
 }
