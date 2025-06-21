@@ -7,6 +7,15 @@ import (
 	"github.com/go-sql-driver/mysql"
 )
 
+type AWSConfig struct {
+	Region     string
+	BucketName string
+	AccessKey  string
+	SecretKey  string
+	Endpoint   string
+	PathStyle  bool
+}
+
 func getEnv(key, defaultValue string) string {
 	v, ok := os.LookupEnv(key)
 	if !ok {
@@ -18,6 +27,20 @@ func getEnv(key, defaultValue string) string {
 
 func AppAddr() string {
 	return getEnv("APP_ADDR", ":8080")
+}
+
+func AWS() *AWSConfig {
+	pathStyleStr := getEnv("AWS_S3_FORCE_PATH_STYLE", "false")
+	pathStyle := pathStyleStr == "true"
+
+	return &AWSConfig{
+		Region:     getEnv("AWS_REGION", "ap-northeast-1"),
+		BucketName: getEnv("AWS_S3_BUCKET", "my-app-bucket"),
+		AccessKey:  getEnv("AWS_ACCESS_KEY_ID", ""),
+		SecretKey:  getEnv("AWS_SECRET_ACCESS_KEY", ""),
+		Endpoint:   getEnv("AWS_ENDPOINT_URL", ""),
+		PathStyle:  pathStyle,
+	}
 }
 
 func MySQL() *mysql.Config {
