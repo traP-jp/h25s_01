@@ -3,11 +3,12 @@ package handler
 import (
 	"backend/internal/domain/model"
 	"backend/internal/domain/repository"
-	"time"
 	"net/http"
-	"github.com/labstack/echo/v4"
-	"github.com/google/uuid"
+	"time"
 
+	validation "github.com/go-ozzo/ozzo-validation"
+	"github.com/google/uuid"
+	"github.com/labstack/echo/v4"
 )
 
 type ShopHandler struct {
@@ -145,7 +146,7 @@ type APIV1ShopsIDImagesDeleteRequest struct {
 	ImageURL string `json:"image_url"`
 }
 
-func (h* ShopHandler) GetShopDetail(c echo.Context) error {
+func (h *ShopHandler) GetShopDetail(c echo.Context) error {
 	shopID := c.Param("id")
 	uuidShopID, err := uuid.Parse(shopID)
 	if err != nil {
@@ -222,13 +223,13 @@ func (h *ShopHandler) UpdateShop(c echo.Context) error {
 				"error": "Invalid latitude or longitude",
 			})
 		}
-		
+
 		if req.Latitude == 0 && req.Longitude == 0 {
 			return c.JSON(http.StatusBadRequest, map[string]string{
 				"error": "Latitude and longitude cannot both be zero",
 			})
 		}
-		
+
 		if req.Latitude == 0 || req.Longitude == 0 {
 			return c.JSON(http.StatusBadRequest, map[string]string{
 				"error": "Latitude and longitude must be provided together",
@@ -245,9 +246,9 @@ func (h *ShopHandler) UpdateShop(c echo.Context) error {
 		}
 		shop.Images = images
 	}
-    if req.PaymentMethods != nil {
-        shop.PaymentMethods = req.PaymentMethods
-    }
+	if req.PaymentMethods != nil {
+		shop.PaymentMethods = req.PaymentMethods
+	}
 	if req.Stations != nil {
 		stationUUIDs := make([]uuid.UUID, len(req.Stations))
 		for i, s := range req.Stations {
@@ -271,14 +272,13 @@ func (h *ShopHandler) UpdateShop(c echo.Context) error {
 		shop.Registerer = userID
 	}
 
-    shop.UpdatedAt = time.Now()
+	shop.UpdatedAt = time.Now()
 
-    if err := h.shopRepo.Save(c.Request().Context(), shop); err != nil {
-        return c.JSON(http.StatusInternalServerError, map[string]string{
-            "error": err.Error(),
-        })
-    }
-
+	if err := h.shopRepo.Save(c.Request().Context(), shop); err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": err.Error(),
+		})
+	}
 
 	return c.JSON(http.StatusOK, FromModelToShop(shop))
 }
@@ -301,4 +301,90 @@ func (h *ShopHandler) Delete(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]string{
 		"message": "Shop deleted successfully",
 	})
+}
+func (h *ShopHandler) GetShops(c echo.Context) error {
+	shops, err := h.shopRepo.FindAll(c.Request().Context())
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": err.Error(),
+		})
+	}
+
+	responses := make([]*Shop, len(shops))
+	for i, v := range shops {
+		responses[i] = FromModelToShop(v)
+	}
+
+	return c.JSON(http.StatusOK, responses)
+}
+
+func (h *ShopHandler) CreateShop(c echo.Context) error {
+	var req APIV1ShopsPostRequest
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "Invalid request payload",
+		})
+	}
+
+	if err := validation.ValidateStruct(
+		&req,
+		validation.Field(&req.Name, validation.Required),
+	); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": err.Error(),
+		})
+	}
+
+	shopName, err := model.NewShopName(req.Name)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "Invalid shop name",
+		})
+	}
+
+	postCode, err := model.NewPostCode(req.PostCode)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "Invalid post code",
+		})
+	}
+
+	registerer, err := model.NewUserID(req.Registerer)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "Invalid registerer user ID",
+		})
+	}
+
+	// Convert string image paths to ImageFile objects
+	images := make([]model.ImageFile, len(req.Images))
+	for i, imgPath := range req.Images {
+		images[i] = model.ImageFile{Path: imgPath}
+	}
+
+	// Convert station string IDs to UUIDs
+	stationUUIDs := make([]uuid.UUID, len(req.Stations))
+	for i, s := range req.Stations {
+		u, err := uuid.Parse(s)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]string{
+				"error": "Invalid station UUID: " + s,
+			})
+		}
+		stationUUIDs[i] = u
+	}
+
+	shop, err := model.NewShop(shopName, req.Address, postCode, req.Latitude, req.Longitude, images, req.PaymentMethods, registerer, stationUUIDs)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": err.Error(),
+		})
+	}
+	if err := h.shopRepo.Save(c.Request().Context(), shop); err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusCreated, FromModelToShop(shop))
 }
