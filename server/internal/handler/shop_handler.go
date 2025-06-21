@@ -3,13 +3,13 @@ package handler
 import "time"
 
 type Shop struct {
-	ID string `json:"id,omitempty"`
+	ID string `json:"id"`
 
 	Name string `json:"name"`
 
 	PostCode string `json:"post_code,omitempty"`
 
-	Address string `json:"address"`
+	Address string `json:"address,omitempty"`
 
 	Latitude string `json:"latitude,omitempty"`
 

@@ -3,7 +3,7 @@ package handler
 import "time"
 
 type Review struct {
-	ID string `json:"id,omitempty"`
+	ID string `json:"id"`
 
 	// レビュー投稿者のユーザーID
 	Author string `json:"author"`
@@ -12,13 +12,13 @@ type Review struct {
 	Shop string `json:"shop"`
 
 	// 評価（0から3まで）
-	Rating string `json:"rating"`
+	Rating string `json:"rating,omitempty"`
 
 	CreatedAt time.Time `json:"created_at,omitempty"`
 
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 
-	Content string `json:"content,omitempty"`
+	Content string `json:"content"`
 
 	Images []string `json:"images,omitempty"`
 }
