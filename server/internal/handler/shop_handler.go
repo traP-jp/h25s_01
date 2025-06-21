@@ -46,6 +46,7 @@ func FromModelShop(s *model.Shop) *ShopDto {
 		ID:             s.ID.String(),
 		Name:           string(s.Name),
 		Stations:       stations,
+		Address:        s.Address,
 		PostCode:       string(s.PostCode),
 		Latitude:       s.Latitude,
 		Longitude:      s.Longitude,
@@ -98,6 +99,7 @@ func FromModelToShop(m *model.Shop) *Shop {
 	return &Shop{
 		ID:             m.ID.String(),
 		Name:           string(m.Name),
+		Address:        m.Address,
 		PostCode:       string(m.PostCode),
 		Latitude:       m.Latitude,
 		Longitude:      m.Longitude,
