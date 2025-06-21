@@ -66,30 +66,22 @@ type APIV1StationsPostRequest struct {
 func (h *StationHandler) CreateStation(c echo.Context) error {
 	var req APIV1StationsPostRequest
 	if err := c.Bind(&req); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{
-			"error": "Invalid request payload",
-		})
+		return errorResponse(c, http.StatusBadRequest, "Invalid request payload")
 	}
 
 	if err := validation.ValidateStruct(
 		&req,
 		validation.Field(&req.Name, validation.Required),
 	); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{
-			"error": err.Error(),
-		})
+		return errorResponse(c, http.StatusBadRequest, err.Error())
 	}
 
 	station, err := model.NewStation(req.Name)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{
-			"error": err.Error(),
-		})
+		return errorResponse(c, http.StatusInternalServerError, err.Error())
 	}
 	if err := h.stationRepo.Save(c.Request().Context(), station); err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{
-			"error": err.Error(),
-		})
+		return errorResponse(c, http.StatusInternalServerError, err.Error())
 	}
 
 	return c.JSON(http.StatusCreated, FromModel(station))
@@ -99,9 +91,7 @@ func (h *StationHandler) CreateStation(c echo.Context) error {
 func (h *StationHandler) GetStations(c echo.Context) error {
 	stations, err := h.stationRepo.FindAll(c.Request().Context())
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{
-			"error": err.Error(),
-		})
+		return errorResponse(c, http.StatusInternalServerError, err.Error())
 	}
 
 	responses := make([]*Station, len(stations))
@@ -121,33 +111,25 @@ func (h *StationHandler) UpdateStation(c echo.Context) error {
 	}
 
 	if err := c.Bind(&req); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{
-			"error": "Invalid request payload",
-		})
+		return errorResponse(c, http.StatusBadRequest, "Invalid request payload")
 	}
 
 	if err := validation.ValidateStruct(
 		&req,
 		validation.Field(&req.Name, validation.Required),
 	); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{
-			"error": err.Error(),
-		})
+		return errorResponse(c, http.StatusBadRequest, err.Error())
 	}
 
 	station, err := h.stationRepo.FindByID(c.Request().Context(), id)
 
 	if err != nil {
-		return c.JSON(http.StatusNotFound, map[string]string{
-			"error": "Invalid name",
-		})
+		return errorResponse(c, http.StatusNotFound, "Invalid name")
 	}
 	station.Name = req.Name
 	station.UpdatedAt = time.Now()
 	if err := h.stationRepo.Save(c.Request().Context(), station); err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{
-			"error": err.Error(),
-		})
+		return errorResponse(c, http.StatusInternalServerError, err.Error())
 	}
 
 	return c.JSON(http.StatusCreated, FromModel(station))
@@ -193,9 +175,7 @@ func (h *StationHandler) GetShopAroundStation(c echo.Context) error {
 	}
 	shops, err := h.shopRepo.FindByStation(c.Request().Context(), id)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{
-			"error": err.Error(),
-		})
+		return errorResponse(c, http.StatusInternalServerError, err.Error())
 	}
 
 	responses := shops
