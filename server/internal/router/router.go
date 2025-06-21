@@ -32,7 +32,10 @@ func NewRouter(
 	api := e.Group("/api/v1")
 	api.Use(handler.UserIDMiddleware)
 	{
-		api.GET("/img/:id", fileHandler.GetImage)
+		images := api.Group("/images")
+		{
+			images.GET("/:id", fileHandler.GetImage)
+		}
 
 		shops := api.Group("/shops")
 		{

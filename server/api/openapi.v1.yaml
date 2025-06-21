@@ -14,6 +14,8 @@ tags:
     description: レビュー関連API
   - name: stations
     description: 駅関連API
+  - name: images
+    description: 画像API
 
 paths:
   # Station API endpoints
@@ -148,12 +150,6 @@ paths:
         - stations
       summary: 駅周辺の店舗取得
       description: 指定された駅周辺の店舗一覧を取得します
-      parameters:
-        - name: limit
-          in: query
-          schema:
-            type: integer
-          description: 取得件数制限
       responses:
         "200":
           description: 駅周辺の店舗一覧
@@ -173,33 +169,6 @@ paths:
         - shops
       summary: 店舗一覧取得
       description: 全店舗の一覧を取得します
-      parameters:
-        - name: limit
-          in: query
-          schema:
-            type: integer
-          description: 取得件数制限
-        - name: latitude
-          in: query
-          schema:
-            type: string
-          description: 緯度（位置検索用）
-        - name: longitude
-          in: query
-          schema:
-            type: string
-          description: 経度（位置検索用）
-        - name: radius
-          in: query
-          schema:
-            type: number
-          description: 検索半径（km）
-        - name: station_id
-          in: query
-          schema:
-            type: string
-            format: uuid
-          description: 駅IDでフィルタ
       responses:
         "200":
           description: 店舗一覧
@@ -558,6 +527,31 @@ paths:
         "404":
           description: レビューが見つかりません
 
+  # Image API endpoints
+  /api/v1/images/{image_id}:
+    parameters:
+      - name: image_id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: 画像ID
+    get:
+      tags:
+        - images
+      summary: 画像取得
+      description: 指定されたIDの画像データを取得します
+      responses:
+        "200":
+          description: 画像データ
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+        "404":
+          description: 画像が見つかりません
+
 components:
   schemas:
     Station:
@@ -592,31 +586,30 @@ components:
           example: "お好み焼き 佐竹"
         post_code:
           type: string
-          example: "1450062"
+          example: "145-0062"
         address:
           type: string
           example: "東京都大田区北千束１丁目５１−６"
         latitude:
-          type: string
-          example: "35.60832907796818"
+          type: number
+          example: 35.60832907796818
         longitude:
-          type: string
-          example: "139.68523096932873"
+          type: number
+          example: 139.68523096932873
         images:
           type: array
           items:
             type: string
-          example: ["/images/なんちゃか", "/images/うんちゃか"]
+          example:
+            [
+              "019793b9-01c7-7a66-b147-0016dfad1cde",
+              "019793b9-01c7-7241-9435-2583982a7bca",
+            ]
         payment_methods:
           type: array
           items:
             type: string
-            format: uuid
-          example:
-            [
-              "81a6344f-a692-425b-bf31-e87a26a44aa4",
-              "9aa46305-9fa6-419e-a4a3-57051d3c1152",
-            ]
+          example: ["PayPay", "Visa", "現金"]
         stations:
           type: array
           items:
@@ -671,7 +664,7 @@ components:
           type: array
           items:
             type: string
-          example: ["/images/なんちゃか"]
+          example: ["019793b9-01c7-774b-aa2b-d3c0208d09ce"]
       required:
         - id
         - author
