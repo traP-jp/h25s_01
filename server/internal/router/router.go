@@ -16,6 +16,8 @@ func NewRouter(userHandler *handler.UserHandler) *echo.Echo {
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORS())
 
+	e.Use(userIDMiddleware)
+
 	e.GET("/health", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, map[string]string{
 			"status": "ok",
@@ -33,4 +35,13 @@ func NewRouter(userHandler *handler.UserHandler) *echo.Echo {
 	}
 
 	return e
+}
+
+func GetUserID(c echo.Context) (string, error) {
+	userID, ok := c.Get(userIDKey).(string)
+	if !ok {
+		return "", echo.NewHTTPError(http.StatusUnauthorized, "user ID not found in context")
+	}
+
+	return userID, nil
 }
