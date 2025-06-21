@@ -133,6 +133,10 @@ func (h *ReviewHandler) CreateReview(c echo.Context) error {
 	}
 
 	userID, err := GetUserID(c)
+	if err != nil {
+		return errorResponse(c, http.StatusInternalServerError, "Failed to get user ID")
+	}
+
 	if err := validateAuthor(userID, req.Author); err != nil {
 		return errorResponse(c, http.StatusForbidden, err.Error())
 	}
@@ -208,6 +212,10 @@ func (h *ReviewHandler) UpdateReview(c echo.Context) error {
 	}
 
 	userID, err := GetUserID(c)
+	if err != nil {
+		return errorResponse(c, http.StatusInternalServerError, "Failed to get user ID")
+	}
+
 	if err := validateAuthor(userID, req.Author); err != nil {
 		return errorResponse(c, http.StatusForbidden, err.Error())
 	}
@@ -303,8 +311,13 @@ func (h *ReviewHandler) UploadImage(c echo.Context) error {
 	if err != nil {
 		return errorResponse(c, http.StatusBadRequest, "Invalid image file")
 	}
+
 	contentType := fileHeader.Header.Get("Content-Type")
+
 	file, err := fileHeader.Open()
+	if err != nil {
+		return errorResponse(c, http.StatusInternalServerError, "Failed to open image file")
+	}
 
 	userID, err := GetUserID(c)
 	if err != nil {
