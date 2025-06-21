@@ -1,6 +1,19 @@
 package handler
 
-import "time"
+import (
+	"backend/internal/domain/repository"
+	"time"
+)
+
+type ShopHandler struct {
+	shopRepo repository.ShopRepository
+}
+
+func NewShopHandler(shopRepo repository.ShopRepository) *ShopHandler {
+	return &ShopHandler{
+		shopRepo: shopRepo,
+	}
+}
 
 type Shop struct {
 	ID string `json:"id"`

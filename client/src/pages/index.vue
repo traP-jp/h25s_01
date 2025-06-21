@@ -1,5 +1,5 @@
 <template>
-  <HelloWorld />
+  <AppHeader />
 </template>
 
 <script lang="ts" setup>
