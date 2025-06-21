@@ -1,6 +1,7 @@
 <template>
-  <div>
-    <p class="text-primary">Suggest</p>
+  <div class="pl-4 pr-4" style="max-width: 700px">
+    <p class="text-primary">Shops</p>
+
     <v-divider
       class="border-opacity-100 rounded-pill"
       color="primary"
@@ -8,14 +9,10 @@
       :thickness="3"
     />
 
-    <div class="pl-4 pr-4">
-      <Showcase class="pt-4" />
-    </div>
+    <Detail class="pt-4 ml-3 mr-3" />
   </div>
 </template>
 
 <script setup>
-  import Showcase from './detail.vue'
+  import Detail from './detail.vue'
 </script>
-
-<style lang="sass"></style>

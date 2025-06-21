@@ -16,5 +16,3 @@
 <script setup>
   import Detail from './detail.vue'
 </script>
-
-<style lang="sass"></style>

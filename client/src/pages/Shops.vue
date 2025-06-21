@@ -1,7 +1,18 @@
 <template>
-  <ShopsList />
+  <div id="container">
+    <ShopList id="shop-list" class="mx-auto" />
+  </div>
 </template>
 
-<script setup lang="ts"></script>
+<style scoped>
+  #container {
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+    height: 100%;
+  }
 
-<style lang="sass" scoped></style>
+  #shop-list {
+    max-height: 100%;
+  }
+</style>

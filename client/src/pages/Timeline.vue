@@ -1,5 +1,5 @@
 <template>
-  <Reviews class="ml-auto mr-auto" />
+  <Reviews class="mx-auto" style="height: 100%" />
 </template>
 
 <script lang="ts" setup>

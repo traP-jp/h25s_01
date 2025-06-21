@@ -1,7 +1,7 @@
 <template>
   <AppHeader />
 
-  <v-main>
+  <v-main height="90vh">
     <router-view />
   </v-main>
 
