@@ -11,4 +11,5 @@ type ShopRepository interface {
 	FindByID(ctx context.Context, id uuid.UUID) (*model.Shop, error)
 	FindAll(ctx context.Context) ([]*model.Shop, error)
 	Delete(ctx context.Context, id uuid.UUID) error
+	FindByStation(ctx context.Context, id uuid.UUID) ([]*model.Shop, error)
 }

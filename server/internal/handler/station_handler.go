@@ -14,6 +14,7 @@ import (
 
 type StationHandler struct {
 	stationRepo repository.StationRepository
+	shopRepo repository.ShopRepository
 }
 
 type StationDto struct {
@@ -23,9 +24,10 @@ type StationDto struct {
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 }
 
-func NewStationHandler(stationRepo repository.StationRepository) *StationHandler {
+func NewStationHandler(stationRepo repository.StationRepository, shopRepo repository.ShopRepository) *StationHandler {
 	return &StationHandler{
 		stationRepo: stationRepo,
+		shopRepo: shopRepo,
 	}
 }
 
@@ -186,4 +188,21 @@ func (h *StationHandler) GetStationDetail(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, FromModelStation(Station))
+}
+func (h *StationHandler) GetShopAroundStation(c echo.Context) error {
+	stationid := c.Param("id")
+	id, err := uuid.Parse(stationid)
+	if err != nil {
+		return errorResponse(c, http.StatusBadRequest, "Invalid station ID")
+	}
+	shops, err := h.shopRepo.FindByStation(c.Request().Context(), id)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": err.Error(),
+		})
+	}
+
+	responses := shops
+
+	return c.JSON(http.StatusCreated, responses)
 }
