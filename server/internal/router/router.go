@@ -9,7 +9,11 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-func NewRouter(userHandler *handler.UserHandler) *echo.Echo {
+func NewRouter(
+	shopHandler *handler.ShopHandler,
+	reviewHandler *handler.ReviewHandler,
+	stationHandler *handler.StationHandler,
+) *echo.Echo {
 	e := echo.New()
 
 	e.Use(middleware.Logger())
@@ -26,12 +30,26 @@ func NewRouter(userHandler *handler.UserHandler) *echo.Echo {
 
 	api := e.Group("/api/v1")
 	{
-		users := api.Group("/users")
+		reviews := api.Group("/reviews")
 		{
-			users.POST("", userHandler.CreateUser)
-			users.GET("/:id", userHandler.GetUser)
-			users.DELETE("/:id", userHandler.DeleteUser)
+			reviews.GET("", reviewHandler.GetReviews)
+			reviews.POST("", reviewHandler.CreateReview)
+			reviews.GET("/:id", reviewHandler.GetReview)
+			reviews.PUT("/:id", reviewHandler.UpdateReview)
+			reviews.DELETE("/:id", reviewHandler.DeleteReview)
+			reviews.POST("/:id/images", reviewHandler.UploadImage)
 		}
+
+		stations := api.Group("/stations")
+		{
+			stations.GET("", stationHandler.GetStations)
+			stations.POST("", stationHandler.CreateStation)
+			stations.GET("/:id", stationHandler.GetStationDetail)
+			stations.PUT("/:id", stationHandler.UpdateStation)
+			stations.DELETE("/:id", stationHandler.DeleteStation)
+			stations.GET("/:id/shops", stationHandler.GetShopAroundStation)
+		}
+
 	}
 
 	return e

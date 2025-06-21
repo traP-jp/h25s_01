@@ -3,6 +3,7 @@ package server
 import (
 	"backend/internal/handler"
 	"backend/internal/infrastructure/database"
+	"backend/internal/infrastructure/file"
 	"backend/internal/router"
 	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
@@ -13,11 +14,23 @@ type Server struct {
 }
 
 func Inject(db *sqlx.DB) *Server {
-	userRepo := database.NewUserRepository(db)
+	shopRepo := database.NewShopRepository(db)
+	reviewRepo := database.NewReviewRepository(db)
+	stationRepo := database.NewStationRepository(db)
+	fileRepo, err := file.NewFileRepository()
+	if err != nil {
+		panic("failed to create file repository: " + err.Error())
+	}
 
-	userHandler := handler.NewUserHandler(userRepo)
+	shopHandler := handler.NewShopHandler(shopRepo, fileRepo)
+	reviewHandler := handler.NewReviewHandler(reviewRepo, fileRepo)
+	stationHandler := handler.NewStationHandler(stationRepo, shopRepo)
 
-	echoRouter := router.NewRouter(userHandler)
+	echoRouter := router.NewRouter(
+		shopHandler,
+		reviewHandler,
+		stationHandler,
+	)
 
 	return &Server{
 		Router: echoRouter,
