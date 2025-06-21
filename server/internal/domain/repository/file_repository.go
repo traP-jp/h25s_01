@@ -1,12 +1,13 @@
 package repository
 
 import (
+	"context"
 	"io"
 
 	"github.com/google/uuid"
 )
 
 type FileRepository interface {
-	UploadImage(contentType string, reader io.Reader) (uuid.UUID, error)
-	DeleteImage(fileID uuid.UUID) error
+	UploadImage(ctx context.Context, contentType string, reader io.Reader) (uuid.UUID, error)
+	DeleteImage(ctx context.Context, fileID uuid.UUID) error
 }

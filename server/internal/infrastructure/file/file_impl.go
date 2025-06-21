@@ -71,13 +71,13 @@ func NewFileRepository() (repository.FileRepository, error) {
 	}, nil
 }
 
-func (r *RepositoryImpl) UploadImage(contentType string, reader io.Reader) (uuid.UUID, error) {
+func (r *RepositoryImpl) UploadImage(ctx context.Context, contentType string, reader io.Reader) (uuid.UUID, error) {
 	fileID := uuid.New()
 
 	key := fileID.String()
 
 	// S3にアップロード
-	_, err := r.s3Client.PutObject(context.TODO(), &s3.PutObjectInput{
+	_, err := r.s3Client.PutObject(ctx, &s3.PutObjectInput{
 		Bucket:      aws.String(r.bucket),
 		Key:         aws.String(key),
 		Body:        reader,
@@ -90,8 +90,8 @@ func (r *RepositoryImpl) UploadImage(contentType string, reader io.Reader) (uuid
 	return fileID, nil
 }
 
-func (r *RepositoryImpl) DeleteImage(fileID uuid.UUID) error { // S3からオブジェクトを削除
-	_, err := r.s3Client.DeleteObject(context.TODO(), &s3.DeleteObjectInput{
+func (r *RepositoryImpl) DeleteImage(ctx context.Context, fileID uuid.UUID) error { // S3からオブジェクトを削除
+	_, err := r.s3Client.DeleteObject(ctx, &s3.DeleteObjectInput{
 		Bucket: aws.String(r.bucket),
 		Key:    aws.String(fileID.String()),
 	})

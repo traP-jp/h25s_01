@@ -284,7 +284,7 @@ func (h *ReviewHandler) DeleteReview(c echo.Context) error {
 	}
 
 	for _, image := range review.Images {
-		_ = h.fileRepo.DeleteImage(image.ID)
+		_ = h.fileRepo.DeleteImage(c.Request().Context(), image.ID)
 	}
 
 	err = h.reviewRepo.Delete(c.Request().Context(), id)
@@ -329,7 +329,7 @@ func (h *ReviewHandler) UploadImage(c echo.Context) error {
 		return errorResponse(c, http.StatusForbidden, err.Error())
 	}
 
-	FileID, err := h.fileRepo.UploadImage(contentType, file)
+	FileID, err := h.fileRepo.UploadImage(c.Request().Context(), contentType, file)
 	if err != nil {
 		return errorResponse(c, http.StatusInternalServerError, "Failed to save image file")
 	}
