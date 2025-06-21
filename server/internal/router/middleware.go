@@ -14,6 +14,7 @@ func userIdMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		username := c.Request().Header.Get("X-Forwarded-User")
 		if username != "" {
 			c.Set(userIDKey, username)
+
 			return next(c)
 		}
 
@@ -23,7 +24,7 @@ func userIdMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 
 		c.Set(userIDKey, "traP")
+
 		return next(c)
 	}
-
 }

@@ -38,10 +38,10 @@ func NewRouter(userHandler *handler.UserHandler) *echo.Echo {
 }
 
 func GetUserID(c echo.Context) (string, error) {
-	userId, ok := c.Get(userIDKey).(string)
+	userID, ok := c.Get(userIDKey).(string)
 	if !ok {
 		return "", echo.NewHTTPError(http.StatusUnauthorized, "user ID not found in context")
 	}
-	return userId, nil
 
+	return userID, nil
 }
