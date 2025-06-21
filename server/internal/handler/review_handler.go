@@ -134,7 +134,7 @@ func (h *ReviewHandler) CreateReview(c echo.Context) error {
 
 	userID, err := GetUserID(c)
 	if err != nil {
-		return errorResponse(c, http.StatusInternalServerError, "Failed to get user ID")
+		return errorResponse(c, http.StatusUnauthorized, "Unauthorized: Failed to get user ID")
 	}
 
 	if err := validateAuthor(userID, req.Author); err != nil {
