@@ -128,49 +128,37 @@ func (h *ReviewHandler) CreateReview(c echo.Context) error {
 	var req APIV1ReviewsPostRequest
 	if err := c.Bind(&req); err != nil {
 		return errorResponse(c, http.StatusBadRequest, "Invalid request payload")
-
 	}
 
 	userID, err := GetUserID(c)
-	if err != nil || userID != req.Author {
-		return errorResponse(c, http.StatusForbidden, "You are not allowed to post this review")
+	if err := validateAuthor(userID, req.Author); err != nil {
+		return errorResponse(c, http.StatusForbidden, err.Error())
 	}
 
-	shopID, err := uuid.Parse(req.Shop)
+	shopID, err := parseShopID(req.Shop)
 	if err != nil {
-		return errorResponse(c, http.StatusBadRequest, "Invalid shop ID")
+		return errorResponse(c, http.StatusBadRequest, err.Error())
 	}
 
-	rating, err := model.NewRating(int(req.Rating))
+	rating, err := parseRating(req.Rating)
 	if err != nil {
-		return errorResponse(c, http.StatusBadRequest, "Invalid rating value")
+		return errorResponse(c, http.StatusBadRequest, err.Error())
 	}
 
-	content := req.Content
-	if len(content) > maxContentLength {
-		return errorResponse(c, http.StatusBadRequest, "Invalid content length")
+	if err := validateContent(req.Content); err != nil {
+		return errorResponse(c, http.StatusBadRequest, err.Error())
 	}
 
-	if len(req.Images) > maxImages {
-		return errorResponse(c, http.StatusBadRequest, "Too many images")
-	}
-
-	images := make([]model.ImageFile, 0, len(req.Images))
-
-	for i, img := range req.Images {
-		imgID, err := uuid.Parse(img)
-		if err != nil {
-			return errorResponse(c, http.StatusBadRequest, "Invalid image ID")
-		}
-
-		images[i] = *model.NewImageFile(imgID)
+	images, err := parseImages(req.Images)
+	if err != nil {
+		return errorResponse(c, http.StatusBadRequest, err.Error())
 	}
 
 	review, err := model.NewReview(
 		model.UserID(userID),
 		shopID,
 		rating,
-		content,
+		req.Content,
 		images,
 	)
 	if err != nil {
@@ -178,9 +166,65 @@ func (h *ReviewHandler) CreateReview(c echo.Context) error {
 	}
 
 	err = h.reviewRepo.Save(c.Request().Context(), review)
+	if err != nil {
+		return errorResponse(c, http.StatusInternalServerError, "Failed to save review")
+	}
 
 	reviewDto := &Review{}
 	reviewDto.FromModel(review)
 
 	return c.JSON(http.StatusCreated, reviewDto)
+}
+
+func validateAuthor(userID, author string) error {
+	if userID != author {
+		return echo.NewHTTPError(http.StatusForbidden, "You are not allowed to post this review")
+	}
+
+	return nil
+}
+
+func parseShopID(shop string) (uuid.UUID, error) {
+	id, err := uuid.Parse(shop)
+	if err != nil {
+		return uuid.Nil, echo.NewHTTPError(http.StatusBadRequest, "Invalid shop ID")
+	}
+
+	return id, nil
+}
+
+func parseRating(rating int32) (model.Rating, error) {
+	r, err := model.NewRating(int(rating))
+	if err != nil {
+		return 0, echo.NewHTTPError(http.StatusBadRequest, "Invalid rating value")
+	}
+
+	return r, nil
+}
+
+func validateContent(content string) error {
+	if len(content) > maxContentLength {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid content length")
+	}
+
+	return nil
+}
+
+func parseImages(imagesReq []string) ([]model.ImageFile, error) {
+	if len(imagesReq) > maxImages {
+		return nil, echo.NewHTTPError(http.StatusBadRequest, "Too many images")
+	}
+
+	images := make([]model.ImageFile, 0, len(imagesReq))
+
+	for _, img := range imagesReq {
+		imgID, err := uuid.Parse(img)
+		if err != nil {
+			return nil, echo.NewHTTPError(http.StatusBadRequest, "Invalid image ID")
+		}
+
+		images = append(images, *model.NewImageFile(imgID))
+	}
+
+	return images, nil
 }
