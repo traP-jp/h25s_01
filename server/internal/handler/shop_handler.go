@@ -102,7 +102,7 @@ func FromModelToShop(m *model.Shop) *Shop {
 
 	images := make([]string, len(m.Images))
 	for i, img := range m.Images {
-		images[i] = img.Path
+		images[i] = img.ID.String()
 	}
 
 	return &Shop{
