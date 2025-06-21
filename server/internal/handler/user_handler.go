@@ -43,7 +43,7 @@ func FromModelUser(u *model.User) *UserDto {
 }
 
 type CreateUserRequest struct {
-	Name  string `json:"name" validate:"required"`
+	Name  string `json:"name"  validate:"required"`
 	Email string `json:"email" validate:"required,email"`
 }
 
@@ -76,8 +76,9 @@ func (h *UserHandler) CreateUser(c echo.Context) error {
 func (h *UserHandler) GetUser(c echo.Context) error {
 	idStr := c.Param("id")
 	id, err := uuid.Parse(idStr)
+
 	if err != nil {
-		return errorResponse(c, http.StatusBadRequest, "Invalid user Id")
+		return errorResponse(c, http.StatusBadRequest, "Invalid user ID")
 	}
 
 	user, err := h.userRepo.GetByID(c.Request().Context(), id)
@@ -91,8 +92,9 @@ func (h *UserHandler) GetUser(c echo.Context) error {
 func (h *UserHandler) DeleteUser(c echo.Context) error {
 	idStr := c.Param("id")
 	id, err := uuid.Parse(idStr)
+
 	if err != nil {
-		return errorResponse(c, http.StatusBadRequest, "Invalid user Id")
+		return errorResponse(c, http.StatusBadRequest, "Invalid user ID")
 	}
 
 	if err := h.userRepo.Delete(c.Request().Context(), id); err != nil {

@@ -9,6 +9,7 @@ import (
 type Shop struct {
 	ID             uuid.UUID
 	Name           ShopName
+	Stations       []uuid.UUID
 	PostCode       PostCode
 	Latitude       float64
 	Longitude      float64
