@@ -244,7 +244,7 @@ func (h *ReviewHandler) UpdateReview(c echo.Context) error {
 
 	review, err := h.reviewRepo.FindByID(c.Request().Context(), id)
 	if err != nil {
-		return err
+		return errorResponse(c, http.StatusNotFound, "Review not found")
 	}
 
 	review.Author = model.UserID(userID)
