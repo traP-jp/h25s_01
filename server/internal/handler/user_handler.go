@@ -47,9 +47,6 @@ type CreateUserRequest struct {
 	Email string `json:"email" validate:"required,email"`
 }
 
-func errorResponse(c echo.Context, status int, msg string) error {
-	return c.JSON(status, map[string]string{"error": msg})
-}
 
 func (h *UserHandler) CreateUser(c echo.Context) error {
 	var req CreateUserRequest
