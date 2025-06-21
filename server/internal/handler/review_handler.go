@@ -1,6 +1,19 @@
 package handler
 
-import "time"
+import (
+	"backend/internal/domain/repository"
+	"time"
+)
+
+type ReviewHandler struct {
+	reviewRepo repository.ReviewRepository
+}
+
+func NewReviewHandler(reviewRepo repository.ReviewRepository) *ReviewHandler {
+	return &ReviewHandler{
+		reviewRepo: reviewRepo,
+	}
+}
 
 type Review struct {
 	ID string `json:"id"`

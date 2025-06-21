@@ -1,6 +1,19 @@
 package handler
 
-import "time"
+import (
+	"backend/internal/domain/repository"
+	"time"
+)
+
+type StationHandler struct {
+	stationRepo repository.StationRepository
+}
+
+func NewStationHandler(stationRepo repository.StationRepository) *StationHandler {
+	return &StationHandler{
+		stationRepo: stationRepo,
+	}
+}
 
 type Station struct {
 	ID string `json:"id"`
