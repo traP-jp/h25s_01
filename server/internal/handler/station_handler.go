@@ -14,6 +14,7 @@ import (
 
 type StationHandler struct {
 	stationRepo repository.StationRepository
+	shopRepo repository.ShopRepository
 }
 
 type StationDto struct {
@@ -23,9 +24,10 @@ type StationDto struct {
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 }
 
-func NewStationHandler(stationRepo repository.StationRepository) *StationHandler {
+func NewStationHandler(stationRepo repository.StationRepository, shopRepo repository.ShopRepository) *StationHandler {
 	return &StationHandler{
 		stationRepo: stationRepo,
+		shopRepo: shopRepo,
 	}
 }
 
@@ -186,4 +188,32 @@ func (h *StationHandler) GetStationDetail(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, FromModelStation(Station))
+}
+func (h *StationHandler) GetShopAroundStation(c echo.Context) error {
+	stationid := c.Param("id")
+	id, err := uuid.Parse(stationid)
+	if err != nil {
+		return errorResponse(c, http.StatusBadRequest, "Invalid station ID")
+	}
+
+	if err != nil {
+		return c.JSON(http.StatusNotFound, map[string]string{
+			"error": "Invalid name",
+		})
+	}
+	shops, err := h.shopRepo.FindByStation(c.Request().Context(), id)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": err.Error(),
+		})
+	}
+
+	responses := shops
+
+	//responses := make([]*Shop, len(shops))
+	//for i, v := range shops {
+	//	responses[i] = FromModel(v)
+	//}
+
+	return c.JSON(http.StatusCreated, responses)
 }
