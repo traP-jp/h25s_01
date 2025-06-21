@@ -12,8 +12,161 @@ tags:
     description: 店舗関連API
   - name: reviews
     description: レビュー関連API
+  - name: stations
+    description: 駅関連API
 
 paths:
+  # Station API endpoints
+  /api/v1/stations:
+    get:
+      tags:
+        - stations
+      summary: 駅一覧取得
+      description: 全駅の一覧を取得します
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          description: 取得件数制限
+        - name: name
+          in: query
+          schema:
+            type: string
+          description: 駅名で部分一致検索
+      responses:
+        "200":
+          description: 駅一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Station"
+    post:
+      tags:
+        - stations
+      summary: 駅作成
+      description: 新規駅を登録します
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "大岡山駅"
+              required:
+                - name
+      responses:
+        "201":
+          description: 作成された駅
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Station"
+        "400":
+          description: 無効なリクエスト
+
+  /api/v1/stations/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: 駅ID
+    get:
+      tags:
+        - stations
+      summary: 駅詳細取得
+      description: 指定されたIDの駅詳細情報を取得
+      responses:
+        "200":
+          description: 駅詳細
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Station"
+        "404":
+          description: 駅が見つかりません
+    put:
+      tags:
+        - stations
+      summary: 駅情報更新
+      description: 指定されたIDの駅情報を更新
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "大岡山駅"
+              required:
+                - name
+      responses:
+        "200":
+          description: 更新された駅
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Station"
+        "404":
+          description: 駅が見つかりません
+        "400":
+          description: 無効なリクエスト
+    delete:
+      tags:
+        - stations
+      summary: 駅削除
+      description: 指定されたIDの駅を削除します
+      responses:
+        "204":
+          description: 駅の削除に成功
+        "404":
+          description: 駅が見つかりません
+        "409":
+          description: この駅は店舗で使用されているため削除できません
+
+  /api/v1/stations/{id}/shops:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: 駅ID
+    get:
+      tags:
+        - stations
+        - shops
+      summary: 駅周辺の店舗取得
+      description: 指定された駅周辺の店舗一覧を取得します
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          description: 取得件数制限
+      responses:
+        "200":
+          description: 駅周辺の店舗一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Shop"
+        "404":
+          description: 駅が見つかりません
+
   # Shop API endpoints
   /api/v1/shops:
     get:
@@ -27,11 +180,6 @@ paths:
           schema:
             type: integer
           description: 取得件数制限
-        - name: offset
-          in: query
-          schema:
-            type: integer
-          description: 取得開始位置
         - name: latitude
           in: query
           schema:
@@ -47,6 +195,12 @@ paths:
           schema:
             type: number
           description: 検索半径（km）
+        - name: station_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: 駅IDでフィルタ
       responses:
         "200":
           description: 店舗一覧
@@ -281,8 +435,8 @@ paths:
                   type: string
                   format: uuid
                 rating:
-                  type: string
-                  enum: ["0", "1", "2", "3"]
+                  type: integer
+                  enum: [0, 1, 2, 3]
                 content:
                   type: string
                 images:
@@ -321,11 +475,6 @@ paths:
           schema:
             type: integer
           description: 取得件数制限
-        - name: offset
-          in: query
-          schema:
-            type: integer
-          description: 取得開始位置
       responses:
         "200":
           description: 店舗のレビュー一覧
@@ -357,11 +506,6 @@ paths:
           schema:
             type: integer
           description: 取得件数制限
-        - name: offset
-          in: query
-          schema:
-            type: integer
-          description: 取得開始位置
       responses:
         "200":
           description: ユーザーのレビュー一覧
@@ -500,6 +644,12 @@ components:
         name:
           type: string
           example: "大岡山駅"
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
       required:
         - id
         - name
