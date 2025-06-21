@@ -101,3 +101,23 @@ func (r *RepositoryImpl) DeleteImage(ctx context.Context, fileID uuid.UUID) erro
 
 	return nil
 }
+
+func (r *RepositoryImpl) GetImage(ctx context.Context, fileID uuid.UUID) (io.ReadCloser, string, error) {
+	key := fileID.String()
+
+	// S3からオブジェクトを取得
+	result, err := r.s3Client.GetObject(ctx, &s3.GetObjectInput{
+		Bucket: aws.String(r.bucket),
+		Key:    aws.String(key),
+	})
+	if err != nil {
+		return nil, "", fmt.Errorf("failed to get object from S3: %w", err)
+	}
+
+	contentType := "application/octet-stream"
+	if result.ContentType != nil {
+		contentType = *result.ContentType
+	}
+
+	return result.Body, contentType, nil
+}

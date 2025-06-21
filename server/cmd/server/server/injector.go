@@ -5,6 +5,7 @@ import (
 	"backend/internal/infrastructure/database"
 	"backend/internal/infrastructure/file"
 	"backend/internal/router"
+
 	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
 )
@@ -25,11 +26,13 @@ func Inject(db *sqlx.DB) *Server {
 	shopHandler := handler.NewShopHandler(shopRepo, fileRepo)
 	reviewHandler := handler.NewReviewHandler(reviewRepo, fileRepo)
 	stationHandler := handler.NewStationHandler(stationRepo, shopRepo)
+	fileHandler := handler.NewFileHandler(fileRepo)
 
 	echoRouter := router.NewRouter(
 		shopHandler,
 		reviewHandler,
 		stationHandler,
+		fileHandler,
 	)
 
 	return &Server{
