@@ -246,7 +246,13 @@ func (h *ShopHandler) UpdateShop(c echo.Context) error {
 	if req.Images != nil {
 		images := make([]model.ImageFile, len(req.Images))
 		for i, imgPath := range req.Images {
-			images[i] = model.ImageFile{Path: imgPath}
+			id, err := uuid.Parse(imgPath)
+			if err != nil {
+				return c.JSON(http.StatusBadRequest, map[string]string{
+					"error": "Invalid image ID: " + imgPath,
+				})
+			}
+			images[i] = *model.NewImageFile(id)
 		}
 		shop.Images = images
 	}
@@ -363,7 +369,13 @@ func (h *ShopHandler) CreateShop(c echo.Context) error {
 	// Convert string image paths to ImageFile objects
 	images := make([]model.ImageFile, len(req.Images))
 	for i, imgPath := range req.Images {
-		images[i] = model.ImageFile{Path: imgPath}
+		id, err := uuid.Parse(imgPath)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]string{
+				"error": "Invalid image ID: " + imgPath,
+			})
+		}
+		images[i] = *model.NewImageFile(id)
 	}
 
 	// Convert station string IDs to UUIDs
