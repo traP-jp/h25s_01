@@ -1,1 +1,1 @@
-export { routes } from 'vue-router/auto-routes'
+export { handleHotUpdate, routes } from 'vue-router/auto-routes'
