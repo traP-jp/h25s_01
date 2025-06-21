@@ -20,7 +20,7 @@
   "devDependencies": {
     "@iconify/vue": "^5.0.0",
     "@tsconfig/node22": "^22.0.0",
-    "@types/node": "^22.9.0",
+    "@types/node": "^24.0.3",
     "@vitejs/plugin-vue": "^5.2.3",
     "@vue/tsconfig": "^0.7.0",
     "eslint": "^9.23.0",
