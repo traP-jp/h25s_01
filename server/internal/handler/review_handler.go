@@ -103,7 +103,7 @@ func (h *ReviewHandler) GetReviews(c echo.Context) error {
 		shopID = uuid.Nil
 	}
 
-	userID := c.QueryParam("user_id")
+	userID := c.QueryParam("author_id")
 
 	reviews, err := h.reviewRepo.FindRecentReviews(
 		c.Request().Context(),
