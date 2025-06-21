@@ -6,6 +6,6 @@ import (
 )
 
 type FileRepository interface {
-	UploadImage(reviewID uuid.UUID, content string, reader io.Reader) (uuid.UUID, error)
+	UploadImage(reviewID uuid.UUID, contentType string, reader io.Reader) (uuid.UUID, error)
 	DeleteImage(fileID uuid.UUID) error
 }
