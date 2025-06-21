@@ -396,6 +396,17 @@ paths:
           schema:
             type: integer
           description: 取得開始位置
+        - name: after
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: before
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: 指定日時以降のレビューを取得
         - name: shop_id
           in: query
           schema:
