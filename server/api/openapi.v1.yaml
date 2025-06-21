@@ -1,0 +1,531 @@
+openapi: 3.1.0
+info:
+  title: Shop and Review API
+  description: 25春ハッカソン1班
+  version: 1.0.0
+servers:
+  - url: https://example.com
+paths:
+  # Shop API endpoints
+  /api/v1/shops:
+    get:
+      summary: 店舗一覧取得
+      description: 全店舗の一覧を取得します
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          description: 取得件数制限
+        - name: offset
+          in: query
+          schema:
+            type: integer
+          description: 取得開始位置
+        - name: latitude
+          in: query
+          schema:
+            type: string
+          description: 緯度（位置検索用）
+        - name: longitude
+          in: query
+          schema:
+            type: string
+          description: 経度（位置検索用）
+        - name: radius
+          in: query
+          schema:
+            type: number
+          description: 検索半径（km）
+      responses:
+        "200":
+          description: 店舗一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Shop"
+    post:
+      summary: 店舗作成
+      description: 新規店舗を登録します
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "お好み焼き 佐竹"
+                post_code:
+                  type: string
+                  example: "1450062"
+                address:
+                  type: string
+                  example: "東京都大田区北千束１丁目５１−６"
+                latitude:
+                  type: string
+                  example: "35.60832907796818"
+                longitude:
+                  type: string
+                  example: "139.68523096932873"
+                images:
+                  type: array
+                  items:
+                    type: string
+                payment_methods:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                registerer:
+                  type: string
+              required:
+                - name
+                - address
+      responses:
+        "201":
+          description: 作成された店舗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Shop"
+
+  /api/v1/shops/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: 店舗ID
+    get:
+      summary: 店舗詳細取得
+      description: 指定されたIDの店舗詳細情報を取得
+      responses:
+        "200":
+          description: 店舗詳細
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Shop"
+        "404":
+          description: 店舗が見つかりません
+    put:
+      summary: 店舗情報更新
+      description: 指定されたIDの店舗情報を更新
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Shop"
+      responses:
+        "200":
+          description: 更新された店舗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Shop"
+        "404":
+          description: 店舗が見つかりません
+    delete:
+      summary: 店舗削除
+      description: 指定されたIDの店舗を削除
+      responses:
+        "204":
+          description: 店舗の削除に成功
+        "404":
+          description: 店舗が見つかりません
+
+  /api/v1/shops/{id}/images:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: 店舗ID
+    post:
+      summary: 店舗画像アップロード
+      description: 指定された店舗に画像をアップロード
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+              required:
+                - image
+      responses:
+        "200":
+          description: 画像のアップロードに成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  image_url:
+                    type: string
+        "404":
+          description: 店舗が見つかりません
+    delete:
+      summary: 店舗画像削除
+      description: 指定された店舗の画像を削除
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                image_url:
+                  type: string
+              required:
+                - image_url
+      responses:
+        "204":
+          description: 画像の削除に成功
+        "404":
+          description: 店舗または画像が見つかりません
+
+  # Review API endpoints
+  /api/v1/reviews:
+    get:
+      summary: レビュー一覧取得
+      description: 全レビューの一覧を取得
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          description: 取得件数制限
+        - name: offset
+          in: query
+          schema:
+            type: integer
+          description: 取得開始位置
+        - name: shop_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: 店舗IDでフィルタ
+        - name: author_id
+          in: query
+          schema:
+            type: string
+          description: 投稿者IDでフィルタ
+      responses:
+        "200":
+          description: レビュー一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Review"
+    post:
+      summary: レビュー投稿
+      description: 新規レビューを投稿
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                author:
+                  type: string
+                shop:
+                  type: string
+                  format: uuid
+                rating:
+                  type: string
+                  enum: ["0", "1", "2", "3"]
+                content:
+                  type: string
+                images:
+                  type: array
+                  items:
+                    type: string
+              required:
+                - author
+                - shop
+                - rating
+      responses:
+        "201":
+          description: 作成されたレビュー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Review"
+
+  /api/v1/shops/{shop_id}/reviews:
+    parameters:
+      - name: shop_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: 店舗ID
+    get:
+      summary: 店舗別レビュー取得
+      description: 指定された店舗のレビュー一覧を取得
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          description: 取得件数制限
+        - name: offset
+          in: query
+          schema:
+            type: integer
+          description: 取得開始位置
+      responses:
+        "200":
+          description: 店舗のレビュー一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Review"
+        "404":
+          description: 店舗が見つかりません
+
+  /api/v1/users/{user_id}/reviews:
+    parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: ユーザーID
+    get:
+      summary: ユーザー別レビュー取得
+      description: 指定されたユーザーのレビュー一覧を取得
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          description: 取得件数制限
+        - name: offset
+          in: query
+          schema:
+            type: integer
+          description: 取得開始位置
+      responses:
+        "200":
+          description: ユーザーのレビュー一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Review"
+        "404":
+          description: ユーザーが見つかりません
+
+  /api/v1/reviews/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: レビューID
+    get:
+      summary: レビュー詳細取得
+      description: 指定されたIDのレビュー詳細を取得
+      responses:
+        "200":
+          description: レビュー詳細
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Review"
+        "404":
+          description: レビューが見つかりません
+    put:
+      summary: レビュー更新
+      description: 指定されたIDのレビューを更新
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Review"
+      responses:
+        "200":
+          description: 更新されたレビュー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Review"
+        "404":
+          description: レビューが見つかりません
+    delete:
+      summary: レビュー削除
+      description: 指定されたIDのレビューを削除
+      responses:
+        "204":
+          description: レビューの削除に成功
+        "404":
+          description: レビューが見つかりません
+
+  /api/v1/reviews/{id}/images:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: レビューID
+    post:
+      summary: レビュー画像アップロード
+      description: 指定されたレビューに画像をアップロード
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+              required:
+                - image
+      responses:
+        "200":
+          description: 画像のアップロードに成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  image_url:
+                    type: string
+        "404":
+          description: レビューが見つかりません
+    delete:
+      summary: レビュー画像削除
+      description: 指定されたレビューの画像を削除
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                image_url:
+                  type: string
+              required:
+                - image_url
+      responses:
+        "204":
+          description: 画像の削除に成功
+        "404":
+          description: レビューまたは画像が見つかりません
+
+components:
+  schemas:
+    Shop:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "f59ff4c7-54b2-40fb-9ddc-574c88794884"
+        name:
+          type: string
+          example: "お好み焼き 佐竹"
+        post_code:
+          type: string
+          example: "1450062"
+        address:
+          type: string
+          example: "東京都大田区北千束１丁目５１−６"
+        latitude:
+          type: string
+          example: "35.60832907796818"
+        longitude:
+          type: string
+          example: "139.68523096932873"
+        images:
+          type: array
+          items:
+            type: string
+          example: ["/images/なんちゃか", "/images/うんちゃか"]
+        payment_methods:
+          type: array
+          items:
+            type: string
+            format: uuid
+          example:
+            [
+              "81a6344f-a692-425b-bf31-e87a26a44aa4",
+              "9aa46305-9fa6-419e-a4a3-57051d3c1152",
+            ]
+        registerer:
+          type: string
+          example: "howard127"
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - name
+        - address
+
+    Review:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "f1e7d04c-17f7-4956-b629-feb6948937b6"
+        author:
+          type: string
+          description: "レビュー投稿者のユーザーID"
+        shop:
+          type: string
+          format: uuid
+          description: "レビュー対象の店舗ID"
+        rating:
+          type: string
+          enum: ["0", "1", "2", "3"]
+          description: "評価（0から3まで）"
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        content:
+          type: string
+        images:
+          type: array
+          items:
+            type: string
+          example: ["/images/なんちゃか"]
+      required:
+        - author
+        - shop
+        - rating
