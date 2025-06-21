@@ -7,13 +7,13 @@ import (
 	"strconv"
 )
 
-const userIdKey = "userId"
+const userIDKey = "userId"
 
 func userIdMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		username := c.Request().Header.Get("X-Forwarded-User")
 		if username != "" {
-			c.Set(userIdKey, username)
+			c.Set(userIDKey, username)
 			return next(c)
 		}
 
@@ -22,7 +22,7 @@ func userIdMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusUnauthorized)
 		}
 
-		c.Set(userIdKey, "traP")
+		c.Set(userIDKey, "traP")
 		return next(c)
 	}
 
