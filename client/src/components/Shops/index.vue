@@ -10,7 +10,7 @@
       />
 
       <div class="pl-4">
-        <Showcase class="pt-4" />
+        <ShopsList class="pt-4" />
       </div>
     </v-container>
   </div>

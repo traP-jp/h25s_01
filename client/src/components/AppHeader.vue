@@ -8,7 +8,7 @@
       <v-app-bar-nav-icon />
     </template>
 
-    <SearchSlot class="mt-4" :items="['test']" />
+    <SearchSlot class="mt-4" :items="stations" />
   </v-app-bar>
 </template>
 

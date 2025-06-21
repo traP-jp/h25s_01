@@ -6,7 +6,8 @@
     @load="load"
   >
     <template
-      v-for="item in items" :key="item"
+      v-for="item in items"
+      :key="item"
     >
       <div
         style="
@@ -28,26 +29,26 @@
           "
         >
           <v-img
+            cover
+            height="100%"
+            src="https://cdn.vuetifyjs.com/images/cards/house.jpg"
             style="grid-row: 1 / 3; grid-column: 1 / 2; object-fit: cover;"
-            src="https://cdn.vuetifyjs.com/images/cards/house.jpg"
             width="100%"
-            height="100%"
-            cover
-          ></v-img>
+          />
           <v-img
+            cover
+            height="100%"
+            src="https://cdn.vuetifyjs.com/images/cards/house.jpg"
             style="grid-row: 1 / 2; grid-column: 2 / 3; object-fit: cover;"
-            src="https://cdn.vuetifyjs.com/images/cards/house.jpg"
             width="100%"
-            height="100%"
-            cover
-          ></v-img>
+          />
           <v-img
-            style="grid-row: 2 / 3; grid-column: 2 / 3; object-fit: cover;"
-            src="https://cdn.vuetifyjs.com/images/cards/house.jpg"
-            width="100%"
-            height="100%"
             cover
-          ></v-img>
+            height="100%"
+            src="https://cdn.vuetifyjs.com/images/cards/house.jpg"
+            style="grid-row: 2 / 3; grid-column: 2 / 3; object-fit: cover;"
+            width="100%"
+          />
         </div>
 
         <v-card class="pl-0">
@@ -64,23 +65,22 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+  import { ref } from 'vue'
 
-const items = ref(Array.from({ length: 30 }, (k, v) => v + 1))
+  const items = ref(Array.from({ length: 30 }, (k, v) => v + 1))
 
-async function api () {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve(Array.from({ length: 10 }, (k, v) => v + items.value.at(-1) + 1))
-    }, 1000)
-  })
-}
+  async function api () {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve(Array.from({ length: 10 }, (k, v) => v + items.value.at(-1) + 1))
+      }, 1000)
+    })
+  }
 
-async function load ({ done }) {
-  // Perform API call
-  const res = await api()
-  items.value.push(...res)
-  done('ok')
-}
+  async function load ({ done }) {
+    // Perform API call
+    const res = await api()
+    items.value.push(...res)
+    done('ok')
+  }
 </script>
-

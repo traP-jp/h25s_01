@@ -1,5 +1,5 @@
 <template>
-  <div class="pl-2">
+  <div>
     <v-container>
       <p class="text-primary">Suggest</p>
       <v-divider
@@ -9,7 +9,7 @@
         :thickness="3"
       />
 
-      <div class="pl-0 pr-0">
+      <div class="pl-4 pr-4">
         <Showcase class="pt-4" />
       </div>
     </v-container>

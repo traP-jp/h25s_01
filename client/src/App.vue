@@ -1,10 +1,6 @@
 <template>
   <v-app>
-    <AppHeader />
-
-    <main>
-      <router-view />
-    </main>
+    <router-view />
   </v-app>
 </template>
 

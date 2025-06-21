@@ -1,7 +1,8 @@
 <template>
-  <Suggest />
+  <div class="pl-2 pr-2">
+    <Suggest />
+    <Reviews />
+  </div>
 </template>
 
-<script lang="ts" setup>
-  //
-</script>
+<script lang="ts" setup />
