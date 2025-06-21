@@ -4,6 +4,10 @@ import (
 	"backend/internal/domain/model"
 	"backend/internal/domain/repository"
 	"time"
+	"net/http"
+	"github.com/labstack/echo/v4"
+	"github.com/google/uuid"
+
 )
 
 type ShopHandler struct {
@@ -139,4 +143,121 @@ type APIV1ShopsIDImagesPost200Response struct {
 
 type APIV1ShopsIDImagesDeleteRequest struct {
 	ImageURL string `json:"image_url"`
+}
+
+func (h* ShopHandler) GetShopHandler(c echo.Context) error {
+	shopID := c.Param("id")
+	uuidShopID, err := uuid.Parse(shopID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "Invalid shop ID format",
+		})
+	}
+	shop, err := h.shopRepo.FindByID(c.Request().Context(), uuidShopID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": err.Error(),
+		})
+	}
+	if shop == nil {
+		return c.JSON(http.StatusNotFound, map[string]string{
+			"error": "Shop not found",
+		})
+	}
+
+	return c.JSON(http.StatusOK, FromModelToShop(shop))
+}
+
+func (h *ShopHandler) UpdateShop(c echo.Context) error {
+	shopID := c.Param("id")
+	uuidShopID, err := uuid.Parse(shopID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "Invalid shop ID format",
+		})
+	}
+
+	var req APIV1ShopsPostRequest
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "Invalid request body",
+		})
+	}
+
+	shop, err := h.shopRepo.FindByID(c.Request().Context(), uuidShopID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": err.Error(),
+		})
+	}
+	if shop == nil {
+		return c.JSON(http.StatusNotFound, map[string]string{
+			"error": "Shop not found",
+		})
+	}
+
+	if req.Name != "" {
+		name, err := model.NewShopName(req.Name)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]string{
+				"error": "Invalid shop name",
+			})
+		}
+		shop.Name = name
+	}
+
+	if req.PostCode != "" {
+		postCode, err := model.NewPostCode(req.PostCode)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]string{
+				"error": "Invalid post code",
+			})
+		}
+		shop.PostCode = postCode
+	}
+
+	if req.Latitude != 0 || req.Longitude != 0 {
+		if req.Latitude < -90 || req.Latitude > 90 || req.Longitude < -180 || req.Longitude > 180 {
+			return c.JSON(http.StatusBadRequest, map[string]string{
+				"error": "Invalid latitude or longitude",
+			})
+		}
+		
+		if req.Latitude == 0 && req.Longitude == 0 {
+			return c.JSON(http.StatusBadRequest, map[string]string{
+				"error": "Latitude and longitude cannot both be zero",
+			})
+		}
+		
+		if req.Latitude == 0 || req.Longitude == 0 {
+			return c.JSON(http.StatusBadRequest, map[string]string{
+				"error": "Latitude and longitude must be provided together",
+			})
+		}
+
+		shop.Latitude = req.Latitude
+		shop.Longitude = req.Longitude
+	}
+
+	return c.JSON(http.StatusOK, FromModelToShop(shop))
+}
+
+func (h *ShopHandler) Delete(c echo.Context) error {
+	shopID := c.Param("id")
+	uuidShopID, err := uuid.Parse(shopID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "Invalid shop ID format",
+		})
+	}
+
+	if err := h.shopRepo.Delete(c.Request().Context(), uuidShopID); err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{
+		"message": "Shop deleted successfully",
+	})
 }
