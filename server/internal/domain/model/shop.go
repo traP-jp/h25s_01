@@ -9,14 +9,14 @@ import (
 type Shop struct {
 	ID             uuid.UUID
 	Name           ShopName
-	postCode       PostCode
-	latitude       float64
-	longitude      float64
-	images         []ImageFile
-	paymentMethods []string
-	registerer     UserID
-	createdAt      time.Time
-	updatedAt      time.Time
+	PostCode       PostCode
+	Latitude       float64
+	Longitude      float64
+	Images         []ImageFile
+	PaymentMethods []string
+	Registerer     UserID
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
 }
 
 type ShopName string

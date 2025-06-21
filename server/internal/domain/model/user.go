@@ -17,6 +17,7 @@ type User struct {
 func NewUser(name, email string) *User {
 	now := time.Now()
 	id, err := uuid.NewV7()
+
 	if err != nil {
 		panic("failed to generate UUID: " + err.Error())
 	}

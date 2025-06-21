@@ -9,11 +9,11 @@ type Review struct {
 	ID        uuid.UUID
 	Author    UserID
 	Shop      uuid.UUID
-	rating    Rating
-	content   string
-	images    []ImageFile
-	createdAt time.Time
-	updatedAt time.Time
+	Rating    Rating
+	Content   string
+	Images    []ImageFile
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 type Rating int
