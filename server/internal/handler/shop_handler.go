@@ -3,6 +3,7 @@ package handler
 import (
 	"backend/internal/domain/model"
 	"backend/internal/domain/repository"
+	"fmt"
 	"mime/multipart"
 	"net/http"
 	"time"
@@ -417,7 +418,7 @@ func (h *ShopHandler) ShopImgUpload(c echo.Context) error {
 	defer func(src multipart.File) {
 		err := src.Close()
 		if err != nil {
-
+			fmt.Println(err)
 		}
 	}(src)
 
