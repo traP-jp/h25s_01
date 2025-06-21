@@ -3,6 +3,8 @@ package handler
 import (
 	"backend/internal/domain/model"
 	"backend/internal/domain/repository"
+	"log"
+	"mime/multipart"
 	"net/http"
 	"strconv"
 	"time"
@@ -319,6 +321,12 @@ func (h *ReviewHandler) UploadImage(c echo.Context) error {
 	if err != nil {
 		return errorResponse(c, http.StatusInternalServerError, "Failed to open image file")
 	}
+	defer func(file multipart.File) {
+		err := file.Close()
+		if err != nil {
+			log.Println(err)
+		}
+	}(file)
 
 	userID, err := GetUserID(c)
 	if err != nil {
