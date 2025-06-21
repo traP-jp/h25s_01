@@ -19,6 +19,9 @@ type Shop struct {
 
 	PaymentMethods []string `json:"payment_methods,omitempty"`
 
+	// 関連する駅のID配列
+	Stations []string `json:"stations,omitempty"`
+
 	Registerer string `json:"registerer,omitempty"`
 
 	CreatedAt time.Time `json:"created_at,omitempty"`
@@ -40,6 +43,9 @@ type APIV1ShopsPostRequest struct {
 	Images []string `json:"images,omitempty"`
 
 	PaymentMethods []string `json:"payment_methods,omitempty"`
+
+	// 関連する駅のID配列
+	Stations []string `json:"stations,omitempty"`
 
 	Registerer string `json:"registerer,omitempty"`
 }

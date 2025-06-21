@@ -12,13 +12,13 @@ type Review struct {
 	Shop string `json:"shop"`
 
 	// 評価（0から3まで）
-	Rating string `json:"rating,omitempty"`
+	Rating int32 `json:"rating,omitempty"`
 
 	CreatedAt time.Time `json:"created_at,omitempty"`
 
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 
-	Content string `json:"content"`
+	Content string `json:"content,omitempty"`
 
 	Images []string `json:"images,omitempty"`
 }
@@ -28,7 +28,7 @@ type APIV1ReviewsPostRequest struct {
 
 	Shop string `json:"shop"`
 
-	Rating string `json:"rating"`
+	Rating int32 `json:"rating"`
 
 	Content string `json:"content,omitempty"`
 
