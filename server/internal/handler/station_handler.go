@@ -204,10 +204,5 @@ func (h *StationHandler) GetShopAroundStation(c echo.Context) error {
 
 	responses := shops
 
-	//responses := make([]*Shop, len(shops))
-	//for i, v := range shops {
-	//	responses[i] = FromModel(v)
-	//}
-
 	return c.JSON(http.StatusCreated, responses)
 }
