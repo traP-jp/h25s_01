@@ -5,10 +5,19 @@ info:
   version: 1.0.0
 servers:
   - url: https://example.com
+
+tags:
+  - name: shops
+    description: 店舗関連API
+  - name: reviews
+    description: レビュー関連API
+
 paths:
   # Shop API endpoints
   /api/v1/shops:
     get:
+      tags:
+        - shops
       summary: 店舗一覧取得
       description: 全店舗の一覧を取得します
       parameters:
@@ -47,6 +56,8 @@ paths:
                 items:
                   $ref: "#/components/schemas/Shop"
     post:
+      tags:
+        - shops
       summary: 店舗作成
       description: 新規店舗を登録します
       requestBody:
@@ -103,6 +114,8 @@ paths:
           format: uuid
         description: 店舗ID
     get:
+      tags:
+        - shops
       summary: 店舗詳細取得
       description: 指定されたIDの店舗詳細情報を取得
       responses:
@@ -115,6 +128,8 @@ paths:
         "404":
           description: 店舗が見つかりません
     put:
+      tags:
+        - shops
       summary: 店舗情報更新
       description: 指定されたIDの店舗情報を更新
       requestBody:
@@ -133,6 +148,8 @@ paths:
         "404":
           description: 店舗が見つかりません
     delete:
+      tags:
+        - shops
       summary: 店舗削除
       description: 指定されたIDの店舗を削除
       responses:
@@ -151,6 +168,8 @@ paths:
           format: uuid
         description: 店舗ID
     post:
+      tags:
+        - shops
       summary: 店舗画像アップロード
       description: 指定された店舗に画像をアップロード
       requestBody:
@@ -178,6 +197,8 @@ paths:
         "404":
           description: 店舗が見つかりません
     delete:
+      tags:
+        - shops
       summary: 店舗画像削除
       description: 指定された店舗の画像を削除
       requestBody:
@@ -200,6 +221,8 @@ paths:
   # Review API endpoints
   /api/v1/reviews:
     get:
+      tags:
+        - reviews
       summary: レビュー一覧取得
       description: 全レビューの一覧を取得
       parameters:
@@ -234,6 +257,8 @@ paths:
                 items:
                   $ref: "#/components/schemas/Review"
     post:
+      tags:
+        - reviews
       summary: レビュー投稿
       description: 新規レビューを投稿
       requestBody:
@@ -279,6 +304,8 @@ paths:
           format: uuid
         description: 店舗ID
     get:
+      tags:
+        - reviews
       summary: 店舗別レビュー取得
       description: 指定された店舗のレビュー一覧を取得
       parameters:
@@ -313,6 +340,8 @@ paths:
           type: string
         description: ユーザーID
     get:
+      tags:
+        - reviews
       summary: ユーザー別レビュー取得
       description: 指定されたユーザーのレビュー一覧を取得
       parameters:
@@ -348,6 +377,8 @@ paths:
           format: uuid
         description: レビューID
     get:
+      tags:
+        - reviews
       summary: レビュー詳細取得
       description: 指定されたIDのレビュー詳細を取得
       responses:
@@ -360,6 +391,8 @@ paths:
         "404":
           description: レビューが見つかりません
     put:
+      tags:
+        - reviews
       summary: レビュー更新
       description: 指定されたIDのレビューを更新
       requestBody:
@@ -378,6 +411,8 @@ paths:
         "404":
           description: レビューが見つかりません
     delete:
+      tags:
+        - reviews
       summary: レビュー削除
       description: 指定されたIDのレビューを削除
       responses:
@@ -396,6 +431,8 @@ paths:
           format: uuid
         description: レビューID
     post:
+      tags:
+        - reviews
       summary: レビュー画像アップロード
       description: 指定されたレビューに画像をアップロード
       requestBody:
@@ -423,6 +460,8 @@ paths:
         "404":
           description: レビューが見つかりません
     delete:
+      tags:
+        - reviews
       summary: レビュー画像削除
       description: 指定されたレビューの画像を削除
       requestBody:
