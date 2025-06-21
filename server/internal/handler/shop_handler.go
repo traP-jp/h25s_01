@@ -3,7 +3,11 @@ package handler
 import (
 	"backend/internal/domain/model"
 	"backend/internal/domain/repository"
+	"net/http"
 	"time"
+
+	validation  "github.com/go-ozzo/ozzo-validation"
+	"github.com/labstack/echo/v4"
 )
 
 type ShopHandler struct {
@@ -139,4 +143,55 @@ type APIV1ShopsIDImagesPost200Response struct {
 
 type APIV1ShopsIDImagesDeleteRequest struct {
 	ImageURL string `json:"image_url"`
+}
+
+func (h *ShopHandler) GetShops(c echo.Context) error {
+	shops, err := h.shopRepo.FindAll(c.Request().Context())
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": err.Error(),
+		})
+	}
+
+	responses := make([]*Shop, len(shops))
+	for i, v := range shops {
+		responses[i] = FromModelToShop(v)
+	}
+
+	return c.JSON(http.StatusCreated, responses)
+}
+
+func (h *ShopHandler) CreateShop(c echo.Context) error {
+	var req APIV1ShopsPostRequest
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "Invalid request payload",
+		})
+	}
+
+	if err := validation.ValidateStruct(
+		&req,
+		validation.Field(&req.Name, validation.Required),
+	); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": err.Error(),
+		})
+	}
+
+	shopName, _ := model.NewShopName(req.Name)
+    postCode, _:=model.NewPostCode(req.PostCode)
+	shop, err := model.NewShop(shopName, req.Address, postCode, req.Latitude, req.Longitude, req.images, req.PaymentMethods, string(req.Registerer), stations)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": err.Error(),
+		})
+	}
+	if err := h.shopRepo.Save(c.Request().Context(), shop); err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusCreated, FromModelToShop(shop))
+
 }
