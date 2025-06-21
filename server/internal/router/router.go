@@ -16,7 +16,7 @@ func NewRouter(userHandler *handler.UserHandler) *echo.Echo {
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORS())
 
-	e.Use(userIdMiddleware)
+	e.Use(userIDMiddleware)
 
 	e.GET("/health", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, map[string]string{

@@ -9,7 +9,7 @@ import (
 
 const userIDKey = "userId"
 
-func userIdMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+func userIDMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		username := c.Request().Header.Get("X-Forwarded-User")
 		if username != "" {
