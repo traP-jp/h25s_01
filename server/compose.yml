@@ -7,11 +7,11 @@ services:
       - "8080:8080"
     environment:
       APP_ADDR: :8080
-      DB_USER: root
-      DB_PASS: pass
-      DB_HOST: db
-      DB_PORT: "3306"
-      DB_NAME: app
+      NS_MARIADB_USER: root
+      NS_MARIADB_PASSWORD: pass
+      NS_MARIADB_HOSTNAME: db
+      NS_MARIADB_PORT: "3306"
+      NS_MARIADB_DATABASE: app
       AWS_ACCESS_KEY_ID: admin
       AWS_SECRET_ACCESS_KEY: password
       AWS_S3_BUCKET: my-bucket
