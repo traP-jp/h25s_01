@@ -17,7 +17,7 @@ type ReviewRepository interface {
 		limit int,
 		offset int,
 		shopID uuid.UUID,
-		authorID uuid.UUID,
+		authorID model.UserID,
 	) ([]*model.Review, error)
 	Delete(ctx context.Context, id uuid.UUID) error
 }
