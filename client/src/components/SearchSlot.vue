@@ -9,8 +9,9 @@
     variant="underlined"
   >
     <template #append>
-      <v-btn class="pl-0" prepend-icon="mdi-magnify">
-        <p class="hidden-xs">さがす</p></v-btn>
+      <v-btn prepend-icon="mdi-magnify">
+        <p class="hidden-xs">さがす</p>
+      </v-btn>
     </template>
   </v-combobox>
 </template>
