@@ -414,4 +414,7 @@ func (h *ShopHandler) DeletePicture(c echo.Context) error {
 	for _, img := range shop.Images {
 		h.fileRepo.DeleteImage(c.Request().Context(), img.ID)
 	}
+	return c.JSON(http.StatusOK, map[string]string{
+		"message": "Picture deleted successfully",
+	})
 }
