@@ -13,6 +13,7 @@ import (
 
 type ShopHandler struct {
 	shopRepo repository.ShopRepository
+	fileRepo repository.FileRepository
 }
 
 type ShopDto struct {
@@ -30,9 +31,10 @@ type ShopDto struct {
 	UpdatedAt      time.Time `json:"updated_at,omitempty"`
 }
 
-func NewShopHandler(shopRepo repository.ShopRepository) *ShopHandler {
+func NewShopHandler(shopRepo repository.ShopRepository, fileRepo repository.FileRepository) *ShopHandler {
 	return &ShopHandler{
 		shopRepo: shopRepo,
+		fileRepo: fileRepo,
 	}
 }
 
