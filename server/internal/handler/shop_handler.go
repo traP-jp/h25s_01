@@ -315,7 +315,7 @@ func (h *ShopHandler) GetShops(c echo.Context) error {
 		responses[i] = FromModelToShop(v)
 	}
 
-	return c.JSON(http.StatusCreated, responses)
+	return c.JSON(http.StatusOK, responses)
 }
 
 func (h *ShopHandler) CreateShop(c echo.Context) error {
@@ -335,9 +335,46 @@ func (h *ShopHandler) CreateShop(c echo.Context) error {
 		})
 	}
 
-	shopName, _ := model.NewShopName(req.Name)
-	postCode, _ := model.NewPostCode(req.PostCode)
-	shop, err := model.NewShop(shopName, req.Address, postCode, req.Latitude, req.Longitude, req.images, req.PaymentMethods, string(req.Registerer), stations)
+	shopName, err := model.NewShopName(req.Name)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "Invalid shop name",
+		})
+	}
+
+	postCode, err := model.NewPostCode(req.PostCode)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "Invalid post code",
+		})
+	}
+
+	registerer, err := model.NewUserID(req.Registerer)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "Invalid registerer user ID",
+		})
+	}
+
+	// Convert string image paths to ImageFile objects
+	images := make([]model.ImageFile, len(req.Images))
+	for i, imgPath := range req.Images {
+		images[i] = model.ImageFile{Path: imgPath}
+	}
+
+	// Convert station string IDs to UUIDs
+	stationUUIDs := make([]uuid.UUID, len(req.Stations))
+	for i, s := range req.Stations {
+		u, err := uuid.Parse(s)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]string{
+				"error": "Invalid station UUID: " + s,
+			})
+		}
+		stationUUIDs[i] = u
+	}
+
+	shop, err := model.NewShop(shopName, req.Address, postCode, req.Latitude, req.Longitude, images, req.PaymentMethods, registerer, stationUUIDs)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{
 			"error": err.Error(),
@@ -350,5 +387,4 @@ func (h *ShopHandler) CreateShop(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusCreated, FromModelToShop(shop))
-
 }
