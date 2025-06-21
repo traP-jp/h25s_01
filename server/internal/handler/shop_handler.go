@@ -145,7 +145,7 @@ type APIV1ShopsIDImagesDeleteRequest struct {
 	ImageURL string `json:"image_url"`
 }
 
-func (h* ShopHandler) GetShopHandler(c echo.Context) error {
+func (h* ShopHandler) GetShopDetail(c echo.Context) error {
 	shopID := c.Param("id")
 	uuidShopID, err := uuid.Parse(shopID)
 	if err != nil {
@@ -238,6 +238,47 @@ func (h *ShopHandler) UpdateShop(c echo.Context) error {
 		shop.Latitude = req.Latitude
 		shop.Longitude = req.Longitude
 	}
+	if req.Images != nil {
+		images := make([]model.ImageFile, len(req.Images))
+		for i, imgPath := range req.Images {
+			images[i] = model.ImageFile{Path: imgPath}
+		}
+		shop.Images = images
+	}
+    if req.PaymentMethods != nil {
+        shop.PaymentMethods = req.PaymentMethods
+    }
+	if req.Stations != nil {
+		stationUUIDs := make([]uuid.UUID, len(req.Stations))
+		for i, s := range req.Stations {
+			u, err := uuid.Parse(s)
+			if err != nil {
+				return c.JSON(http.StatusBadRequest, map[string]string{
+					"error": "Invalid station UUID: " + s,
+				})
+			}
+			stationUUIDs[i] = u
+		}
+		shop.Stations = stationUUIDs
+	}
+	if req.Registerer != "" {
+		userID, err := model.NewUserID(req.Registerer)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]string{
+				"error": "Invalid registerer user ID",
+			})
+		}
+		shop.Registerer = userID
+	}
+
+    shop.UpdatedAt = time.Now()
+
+    if err := h.shopRepo.Save(c.Request().Context(), shop); err != nil {
+        return c.JSON(http.StatusInternalServerError, map[string]string{
+            "error": err.Error(),
+        })
+    }
+
 
 	return c.JSON(http.StatusOK, FromModelToShop(shop))
 }
