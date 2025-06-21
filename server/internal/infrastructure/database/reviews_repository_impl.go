@@ -88,7 +88,12 @@ func (r *ReviewRepositoryImpl) Save(ctx context.Context, review *model.Review) e
 	if err != nil {
 		return fmt.Errorf("failed to begin transaction: %w", err)
 	}
-	defer tx.Rollback()
+	defer func() {
+		err := tx.Rollback()
+		if err != nil && !errors.Is(err, sql.ErrTxDone) {
+			fmt.Printf("failed to rollback transaction: %v\n", err)
+		}
+	}()
 
 	// Save review
 	dto := &ReviewDto{}
@@ -148,6 +153,7 @@ func (r *ReviewRepositoryImpl) FindByID(ctx context.Context, id uuid.UUID) (*mod
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, fmt.Errorf("review not found")
 		}
+
 		return nil, fmt.Errorf("failed to get review: %w", err)
 	}
 
@@ -246,7 +252,12 @@ func (r *ReviewRepositoryImpl) Delete(ctx context.Context, id uuid.UUID) error {
 	if err != nil {
 		return fmt.Errorf("failed to begin transaction: %w", err)
 	}
-	defer tx.Rollback()
+	defer func() {
+		err := tx.Rollback()
+		if err != nil && !errors.Is(err, sql.ErrTxDone) {
+			fmt.Printf("failed to rollback transaction: %v\n", err)
+		}
+	}()
 
 	// Delete review images first (foreign key constraint)
 	deleteImagesQuery := `DELETE FROM review_images WHERE review_id = ?`

@@ -123,7 +123,12 @@ func (r *ShopRepositoryImpl) Save(ctx context.Context, shop *model.Shop) error {
 	if err != nil {
 		return fmt.Errorf("failed to begin transaction: %w", err)
 	}
-	defer tx.Rollback()
+	defer func() {
+		err := tx.Rollback()
+		if err != nil && !errors.Is(err, sql.ErrTxDone) {
+			fmt.Printf("failed to rollback transaction: %v\n", err)
+		}
+	}()
 
 	// Save shop
 	dto := &ShopDto{}
@@ -221,6 +226,7 @@ WHERE id = ?
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, fmt.Errorf("shop not found")
 		}
+
 		return nil, fmt.Errorf("failed to get shop: %w", err)
 	}
 
@@ -300,7 +306,12 @@ func (r *ShopRepositoryImpl) Delete(ctx context.Context, id uuid.UUID) error {
 	if err != nil {
 		return fmt.Errorf("failed to begin transaction: %w", err)
 	}
-	defer tx.Rollback()
+	defer func() {
+		err := tx.Rollback()
+		if err != nil && !errors.Is(err, sql.ErrTxDone) {
+			fmt.Printf("failed to rollback transaction: %v\n", err)
+		}
+	}()
 
 	// Delete shop stations
 	deleteStationsQuery := `DELETE FROM shop_stations WHERE shop_id = ?`
