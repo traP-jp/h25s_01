@@ -474,7 +474,7 @@ func (h *ShopHandler) ShopImgUpload(c echo.Context) error {
 			"error": "Shop not found",
 		})
 	}
-	shop.Images = append(shop.Images, model.ImageFile{Path: imageID.String()})
+	shop.Images = append(shop.Images, *model.NewImageFile(imageID))
 	shop.UpdatedAt = time.Now()
 
 	if err := h.shopRepo.Save(c.Request().Context(), shop); err != nil {
