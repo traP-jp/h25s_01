@@ -252,6 +252,36 @@ func (h *ReviewHandler) UpdateReview(c echo.Context) error {
 	return c.JSON(http.StatusCreated, reviewDto)
 }
 
+func (h *ReviewHandler) DeleteReview(c echo.Context) error {
+	id, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		return errorResponse(c, http.StatusBadRequest, "Invalid review ID")
+	}
+
+	userID, err := GetUserID(c)
+	if err != nil {
+		return errorResponse(c, http.StatusInternalServerError, "Failed to get user ID")
+	}
+
+	review, err := h.reviewRepo.FindByID(c.Request().Context(), id)
+	if err != nil {
+		return errorResponse(c, http.StatusNotFound, "Review not found")
+	}
+
+	if err := validateAuthor(userID, string(review.Author)); err != nil {
+		return errorResponse(c, http.StatusForbidden, err.Error())
+	}
+
+	err = h.reviewRepo.Delete(c.Request().Context(), id)
+	if err != nil {
+		return errorResponse(c, http.StatusInternalServerError, "Failed to delete review")
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{
+		"message": "Review deleted successfully",
+	})
+}
+
 func validateAuthor(userID, author string) error {
 	if userID != author {
 		return echo.NewHTTPError(http.StatusForbidden, "You are not allowed to post this review")
