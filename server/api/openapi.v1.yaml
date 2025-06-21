@@ -557,27 +557,6 @@ paths:
                     type: string
         "404":
           description: レビューが見つかりません
-    delete:
-      tags:
-        - reviews
-      summary: レビュー画像削除
-      description: 指定されたレビューの画像を削除
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                image_url:
-                  type: string
-              required:
-                - image_url
-      responses:
-        "204":
-          description: 画像の削除に成功
-        "404":
-          description: レビューまたは画像が見つかりません
 
 components:
   schemas:
