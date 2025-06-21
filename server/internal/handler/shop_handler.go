@@ -3,6 +3,8 @@ package handler
 import (
 	"backend/internal/domain/model"
 	"backend/internal/domain/repository"
+	"fmt"
+	"mime/multipart"
 	"net/http"
 	"time"
 
@@ -389,4 +391,99 @@ func (h *ShopHandler) CreateShop(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusCreated, FromModelToShop(shop))
+}
+
+func (h *ShopHandler) DeletePicture(c echo.Context) error {
+	shopID := c.Param("id")
+	uuidShopID, err := uuid.Parse(shopID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "Invalid shop ID format",
+		})
+	}
+	shop, err := h.shopRepo.FindByID(c.Request().Context(), uuidShopID)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": err.Error(),
+		})
+	}
+	if shop == nil {
+		return c.JSON(http.StatusNotFound, map[string]string{
+			"error": "Shop not found",
+		})
+	}
+	for _, img := range shop.Images {
+		err := h.fileRepo.DeleteImage(c.Request().Context(), img.ID)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]string{
+				"error": err.Error(),
+			})
+		}
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{
+		"message": "Picture deleted successfully",
+	})
+}
+
+func (h *ShopHandler) ShopImgUpload(c echo.Context) error {
+	shopID := c.Param("id")
+	uuidShopID, err := uuid.Parse(shopID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "Invalid shop ID format",
+		})
+	}
+
+	file, err := c.FormFile("image")
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "Failed to get uploaded file",
+		})
+	}
+
+	src, err := file.Open()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": "Failed to open uploaded file",
+		})
+	}
+	defer func(src multipart.File) {
+		err := src.Close()
+		if err != nil {
+			fmt.Println(err)
+		}
+	}(src)
+
+	contentType := file.Header.Get("Content-Type")
+	imageID, err := h.fileRepo.UploadImage(c.Request().Context(), contentType, src)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": "Failed to upload image: " + err.Error(),
+		})
+	}
+	shop, err := h.shopRepo.FindByID(c.Request().Context(), uuidShopID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": "Failed to find shop: " + err.Error(),
+		})
+	}
+	if shop == nil {
+		return c.JSON(http.StatusNotFound, map[string]string{
+			"error": "Shop not found",
+		})
+	}
+	shop.Images = append(shop.Images, model.ImageFile{Path: imageID.String()})
+	shop.UpdatedAt = time.Now()
+
+	if err := h.shopRepo.Save(c.Request().Context(), shop); err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": "Failed to save shop with new image: " + err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, APIV1ShopsIDImagesPost200Response{
+		ImageURL: imageID.String(),
+	})
 }
