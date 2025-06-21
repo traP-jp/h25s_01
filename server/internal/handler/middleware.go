@@ -1,4 +1,4 @@
-package router
+package handler
 
 import (
 	"github.com/labstack/echo/v4"
@@ -7,13 +7,13 @@ import (
 	"strconv"
 )
 
-const userIDKey = "userId"
+const UserIDKey = "userId"
 
-func userIDMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+func UserIDMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		username := c.Request().Header.Get("X-Forwarded-User")
 		if username != "" {
-			c.Set(userIDKey, username)
+			c.Set(UserIDKey, username)
 
 			return next(c)
 		}
@@ -23,7 +23,7 @@ func userIDMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusUnauthorized)
 		}
 
-		c.Set(userIDKey, "traP")
+		c.Set(UserIDKey, "traP")
 
 		return next(c)
 	}
