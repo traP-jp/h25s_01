@@ -14,7 +14,7 @@ import (
 
 type StationHandler struct {
 	stationRepo repository.StationRepository
-	shopRepo repository.ShopRepository
+	shopRepo    repository.ShopRepository
 }
 
 type StationDto struct {
@@ -27,7 +27,7 @@ type StationDto struct {
 func NewStationHandler(stationRepo repository.StationRepository, shopRepo repository.ShopRepository) *StationHandler {
 	return &StationHandler{
 		stationRepo: stationRepo,
-		shopRepo: shopRepo,
+		shopRepo:    shopRepo,
 	}
 }
 
@@ -61,10 +61,6 @@ func FromModel(m *model.Station) *Station {
 
 type APIV1StationsPostRequest struct {
 	Name string `json:"name"`
-}
-
-func errorResponse(c echo.Context, status int, msg string) error {
-	return c.JSON(status, map[string]string{"error": msg})
 }
 
 func (h *StationHandler) CreateStation(c echo.Context) error {

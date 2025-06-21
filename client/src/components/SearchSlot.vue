@@ -1,8 +1,10 @@
 <template>
   <v-combobox
+    clear-icon="mdi-close"
     clearable
     :items="items"
     label="最寄り駅"
+    menu-icon="mdi-chevron-down"
     variant="underlined"
     max-width="70%"
   >

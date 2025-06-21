@@ -1,15 +1,17 @@
 package model
 
 import (
-	"github.com/google/uuid"
 	"regexp"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type Shop struct {
 	ID             uuid.UUID
 	Name           ShopName
 	Stations       []uuid.UUID
+	Address        string
 	PostCode       PostCode
 	Latitude       float64
 	Longitude      float64
@@ -22,11 +24,13 @@ type Shop struct {
 
 func NewShop(
 	name ShopName,
+	address string,
 	postCode PostCode,
 	latitude, longitude float64,
 	images []ImageFile,
 	paymentMethods []string,
 	registerer UserID,
+	stations []uuid.UUID,
 ) (*Shop, error) {
 	id, err := uuid.NewV7()
 	if err != nil {
@@ -36,12 +40,14 @@ func NewShop(
 	return &Shop{
 		ID:             id,
 		Name:           name,
+		Address:        address,
 		PostCode:       postCode,
 		Latitude:       latitude,
 		Longitude:      longitude,
 		Images:         images,
 		PaymentMethods: paymentMethods,
 		Registerer:     registerer,
+		Stations:       stations,
 		CreatedAt:      time.Now(),
 		UpdatedAt:      time.Now(),
 	}, nil
