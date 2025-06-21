@@ -195,12 +195,6 @@ func (h *StationHandler) GetShopAroundStation(c echo.Context) error {
 	if err != nil {
 		return errorResponse(c, http.StatusBadRequest, "Invalid station ID")
 	}
-
-	if err != nil {
-		return c.JSON(http.StatusNotFound, map[string]string{
-			"error": "Invalid name",
-		})
-	}
 	shops, err := h.shopRepo.FindByStation(c.Request().Context(), id)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{
