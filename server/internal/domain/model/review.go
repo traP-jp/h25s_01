@@ -16,9 +16,14 @@ type Review struct {
 	UpdatedAt time.Time
 }
 
-func NewReview(author UserID, shop uuid.UUID, rating Rating, content string, images []ImageFile) *Review {
+func NewReview(author UserID, shop uuid.UUID, rating Rating, content string, images []ImageFile) (*Review, error) {
+	id, err := uuid.NewV7()
+	if err != nil {
+		return nil, err
+	}
+
 	return &Review{
-		ID:        uuid.New(),
+		ID:        id,
 		Author:    author,
 		Shop:      shop,
 		Rating:    rating,
@@ -26,7 +31,7 @@ func NewReview(author UserID, shop uuid.UUID, rating Rating, content string, ima
 		Images:    images,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
-	}
+	}, nil
 }
 
 type Rating int

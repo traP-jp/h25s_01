@@ -26,9 +26,14 @@ func NewShop(
 	images []ImageFile,
 	paymentMethods []string,
 	registerer UserID,
-) *Shop {
+) (*Shop, error) {
+	id, err := uuid.NewV7()
+	if err != nil {
+		return nil, err
+	}
+
 	return &Shop{
-		ID:             uuid.New(),
+		ID:             id,
 		Name:           name,
 		PostCode:       postCode,
 		Latitude:       latitude,
@@ -38,7 +43,7 @@ func NewShop(
 		Registerer:     registerer,
 		CreatedAt:      time.Now(),
 		UpdatedAt:      time.Now(),
-	}
+	}, nil
 }
 
 type ShopName string
