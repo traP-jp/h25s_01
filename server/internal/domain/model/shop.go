@@ -19,6 +19,28 @@ type Shop struct {
 	UpdatedAt      time.Time
 }
 
+func NewShop(
+	name ShopName,
+	postCode PostCode,
+	latitude, longitude float64,
+	images []ImageFile,
+	paymentMethods []string,
+	registerer UserID,
+) *Shop {
+	return &Shop{
+		ID:             uuid.New(),
+		Name:           name,
+		PostCode:       postCode,
+		Latitude:       latitude,
+		Longitude:      longitude,
+		Images:         images,
+		PaymentMethods: paymentMethods,
+		Registerer:     registerer,
+		CreatedAt:      time.Now(),
+		UpdatedAt:      time.Now(),
+	}
+}
+
 type ShopName string
 
 func NewShopName(name string) (ShopName, error) {

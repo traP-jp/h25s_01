@@ -16,6 +16,19 @@ type Review struct {
 	UpdatedAt time.Time
 }
 
+func NewReview(author UserID, shop uuid.UUID, rating Rating, content string, images []ImageFile) *Review {
+	return &Review{
+		ID:        uuid.New(),
+		Author:    author,
+		Shop:      shop,
+		Rating:    rating,
+		Content:   content,
+		Images:    images,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
+}
+
 type Rating int
 
 func NewRating(value int) (Rating, error) {
