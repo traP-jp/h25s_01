@@ -17,6 +17,7 @@ func NewStation(name string) (*Station, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	if name == "" {
 		return nil, ErrInvalidStationName
 	}
