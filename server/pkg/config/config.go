@@ -32,6 +32,17 @@ func MySQL() *mysql.Config {
 		getEnv("DB_PORT", "3306"),
 	)
 	c.DBName = getEnv("DB_NAME", "app")
+
+	// NeoShowcase対応
+	c.User = getEnv("NS_MARIADB_USER", "root")
+	c.Passwd = getEnv("NS_MARIADB_PASSWORD", "pass")
+	c.Addr = fmt.Sprintf(
+		"%s:%s",
+		getEnv("NS_MARIADB_HOSTNAME", "localhost"),
+		getEnv("NS_MARIADB_PORT", "3306"),
+	)
+	c.DBName = getEnv("NS_MARIADB_DATABASE", "app")
+
 	c.Collation = "utf8mb4_general_ci"
 	c.ParseTime = true
 	c.AllowNativePasswords = true
