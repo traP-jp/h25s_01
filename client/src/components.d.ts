@@ -17,6 +17,7 @@ declare module 'vue' {
     SearchSlot: typeof import('./components/SearchSlot.vue')['default']
     Showcase: typeof import('./components/Suggest/showcase.vue')['default']
     Suggest: typeof import('./components/Suggest/index.vue')['default']
-    Timeline: typeof import('./components/Timeline/suggest/index.vue')['default']
+    Timeline: typeof import('./components/Timeline/index.vue')['default']
+    TimelineDetail: typeof import('./components/Timeline/TimelineDetail.vue')['default']
   }
 }

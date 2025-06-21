@@ -1,5 +1,5 @@
 <template>
-  <Suggest />
+  <TimelineDetail />
 </template>
 
 <script setup lang="ts"></script>
