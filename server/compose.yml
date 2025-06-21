@@ -12,6 +12,11 @@ services:
       DB_HOST: db
       DB_PORT: "3306"
       DB_NAME: app
+      AWS_ACCESS_KEY_ID: admin
+      AWS_SECRET_ACCESS_KEY: password
+      AWS_S3_BUCKET: my-bucket
+      AWS_ENDPOINT_URL: http://minio:9000
+      AWS_S3_FORCE_PATH_STYLE: "true"
       DEBUG: true
     depends_on:
       db:
@@ -44,3 +49,23 @@ services:
     depends_on:
       db:
         condition: service_healthy
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: password
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+volumes:
+  minio_data:
