@@ -30,6 +30,7 @@ func NewShop(
 	images []ImageFile,
 	paymentMethods []string,
 	registerer UserID,
+	stations []uuid.UUID,
 ) (*Shop, error) {
 	id, err := uuid.NewV7()
 	if err != nil {
@@ -46,6 +47,7 @@ func NewShop(
 		Images:         images,
 		PaymentMethods: paymentMethods,
 		Registerer:     registerer,
+		Stations:       stations,
 		CreatedAt:      time.Now(),
 		UpdatedAt:      time.Now(),
 	}, nil
