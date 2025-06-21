@@ -530,8 +530,8 @@ components:
           type: string
           format: date-time
       required:
+        - id
         - name
-        - address
 
     Review:
       type: object
@@ -565,6 +565,7 @@ components:
             type: string
           example: ["/images/なんちゃか"]
       required:
+        - id
         - author
         - shop
-        - rating
+        - content
