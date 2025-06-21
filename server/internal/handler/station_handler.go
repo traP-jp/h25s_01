@@ -16,9 +16,25 @@ type StationHandler struct {
 	stationRepo repository.StationRepository
 }
 
+type StationDto struct {
+	ID        string    `json:"id"`
+	Name      string    `json:"name"`
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+}
+
 func NewStationHandler(stationRepo repository.StationRepository) *StationHandler {
 	return &StationHandler{
 		stationRepo: stationRepo,
+	}
+}
+
+func FromModelStation(s *model.Station) *StationDto {
+	return &StationDto{
+		ID:        s.ID.String(),
+		Name:      s.Name,
+		CreatedAt: s.CreatedAt,
+		UpdatedAt: s.UpdatedAt,
 	}
 }
 
@@ -44,6 +60,7 @@ func FromModel(m *model.Station) *Station {
 type APIV1StationsPostRequest struct {
 	Name string `json:"name"`
 }
+
 func errorResponse(c echo.Context, status int, msg string) error {
 	return c.JSON(status, map[string]string{"error": msg})
 }
@@ -134,7 +151,7 @@ func (h *StationHandler) UpdateStation(c echo.Context) error {
 			"error": err.Error(),
 		})
 	}
-    
+
 	return c.JSON(http.StatusCreated, FromModel(station))
 }
 
@@ -153,4 +170,20 @@ func (h *StationHandler) DeleteStation(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]string{
 		"message": "station deleted successfully",
 	})
+}
+
+func (h *StationHandler) GetStationDetail(c echo.Context) error {
+	idStr := c.Param("id")
+	id, err := uuid.Parse(idStr)
+
+	if err != nil {
+		return errorResponse(c, http.StatusBadRequest, "Invalid Station ID")
+	}
+
+	Station, err := h.stationRepo.FindByID(c.Request().Context(), id)
+	if err != nil {
+		return errorResponse(c, http.StatusInternalServerError, fmt.Sprintf("failed to get user: %v", err))
+	}
+
+	return c.JSON(http.StatusOK, FromModelStation(Station))
 }
