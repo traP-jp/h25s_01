@@ -146,7 +146,6 @@ paths:
     get:
       tags:
         - stations
-        - shops
       summary: 駅周辺の店舗取得
       description: 指定された駅周辺の店舗一覧を取得します
       parameters:
