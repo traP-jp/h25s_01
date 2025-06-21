@@ -1,5 +1,5 @@
 <template>
-  <AppHeader />
+  <Suggest />
 </template>
 
 <script lang="ts" setup>
