@@ -4,6 +4,7 @@ import (
 	"backend/internal/domain/model"
 	"context"
 	"github.com/google/uuid"
+	"time"
 )
 
 type ReviewRepository interface {
@@ -11,6 +12,8 @@ type ReviewRepository interface {
 	FindByID(ctx context.Context, id uuid.UUID) (*model.Review, error)
 	FindRecentReviews(
 		ctx context.Context,
+		after time.Time,
+		before time.Time,
 		limit int,
 		offset int,
 		shopID uuid.UUID,
