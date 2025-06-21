@@ -13,3 +13,7 @@ func GetUserID(c echo.Context) (string, error) {
 
 	return userID, nil
 }
+
+func errorResponse(c echo.Context, status int, msg string) error {
+	return c.JSON(status, map[string]string{"error": msg})
+}
