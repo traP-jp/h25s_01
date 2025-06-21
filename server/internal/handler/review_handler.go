@@ -15,11 +15,13 @@ const maxImages = 4
 
 type ReviewHandler struct {
 	reviewRepo repository.ReviewRepository
+	fileRepo   repository.FileRepository
 }
 
-func NewReviewHandler(reviewRepo repository.ReviewRepository) *ReviewHandler {
+func NewReviewHandler(reviewRepo repository.ReviewRepository, fileRepo repository.FileRepository) *ReviewHandler {
 	return &ReviewHandler{
 		reviewRepo: reviewRepo,
+		fileRepo:   fileRepo,
 	}
 }
 
@@ -272,6 +274,10 @@ func (h *ReviewHandler) DeleteReview(c echo.Context) error {
 		return errorResponse(c, http.StatusForbidden, err.Error())
 	}
 
+	for _, image := range review.Images {
+		_ = h.fileRepo.DeleteImage(image.ID)
+	}
+
 	err = h.reviewRepo.Delete(c.Request().Context(), id)
 	if err != nil {
 		return errorResponse(c, http.StatusInternalServerError, "Failed to delete review")
@@ -279,6 +285,49 @@ func (h *ReviewHandler) DeleteReview(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, map[string]string{
 		"message": "Review deleted successfully",
+	})
+}
+
+func (h *ReviewHandler) UploadImage(c echo.Context) error {
+	reviewID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		return errorResponse(c, http.StatusBadRequest, "Invalid review ID")
+	}
+
+	review, err := h.reviewRepo.FindByID(c.Request().Context(), reviewID)
+	if err != nil {
+		return errorResponse(c, http.StatusNotFound, "Review not found")
+	}
+
+	fileHeader, err := c.FormFile("image")
+	if err != nil {
+		return errorResponse(c, http.StatusBadRequest, "Invalid image file")
+	}
+	contentType := fileHeader.Header.Get("Content-Type")
+	file, err := fileHeader.Open()
+
+	userID, err := GetUserID(c)
+	if err != nil {
+		return errorResponse(c, http.StatusInternalServerError, "Failed to get user ID")
+	}
+
+	if err := validateAuthor(userID, string(review.Author)); err != nil {
+		return errorResponse(c, http.StatusForbidden, err.Error())
+	}
+
+	FileID, err := h.fileRepo.UploadImage(reviewID, contentType, file)
+	if err != nil {
+		return errorResponse(c, http.StatusInternalServerError, "Failed to save image file")
+	}
+
+	review.Images = append(review.Images, *model.NewImageFile(FileID))
+
+	if err := h.reviewRepo.Save(c.Request().Context(), review); err != nil {
+		return errorResponse(c, http.StatusInternalServerError, "Failed to save review with new image")
+	}
+
+	return c.JSON(http.StatusCreated, map[string]string{
+		"id": FileID.String(),
 	})
 }
 
