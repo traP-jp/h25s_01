@@ -370,6 +370,11 @@ func (h *ShopHandler) DeletePicture(c echo.Context) error {
 		}
 	}
 
+	shop.Images = []model.ImageFile{}
+	if err := h.shopRepo.Save(c.Request().Context(), shop); err != nil {
+		return errorResponse(c, http.StatusInternalServerError, "Failed to save shop after deleting images: "+err.Error())
+	}
+
 	return c.JSON(http.StatusOK, map[string]string{
 		"message": "Picture deleted successfully",
 	})
