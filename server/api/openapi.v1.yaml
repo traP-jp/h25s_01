@@ -1,10 +1,11 @@
 openapi: 3.1.0
 info:
-  title: Shop and Review API
+  title: 25春ハッカソン1班 API
   description: 25春ハッカソン1班
   version: 1.0.0
 servers:
-  - url: https://example.com
+  - url: http://localhost:8080
+    description: 開発環境
 
 tags:
   - name: shops
@@ -91,6 +92,12 @@ paths:
                   items:
                     type: string
                     format: uuid
+                stations:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                  description: "関連する駅のID配列"
                 registerer:
                   type: string
               required:
@@ -483,6 +490,20 @@ paths:
 
 components:
   schemas:
+    Station:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+        name:
+          type: string
+          example: "大岡山駅"
+      required:
+        - id
+        - name
+
     Shop:
       type: object
       properties:
@@ -520,6 +541,17 @@ components:
               "81a6344f-a692-425b-bf31-e87a26a44aa4",
               "9aa46305-9fa6-419e-a4a3-57051d3c1152",
             ]
+        stations:
+          type: array
+          items:
+            type: string
+            format: uuid
+          example:
+            [
+              "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+              "b2c3d4e5-f6g7-8901-ijkl-mn2345678901",
+            ]
+          description: "関連する駅のID配列"
         registerer:
           type: string
           example: "howard127"
@@ -530,8 +562,8 @@ components:
           type: string
           format: date-time
       required:
+        - id
         - name
-        - address
 
     Review:
       type: object
@@ -548,8 +580,8 @@ components:
           format: uuid
           description: "レビュー対象の店舗ID"
         rating:
-          type: string
-          enum: ["0", "1", "2", "3"]
+          type: integer
+          enum: [0, 1, 2, 3]
           description: "評価（0から3まで）"
         created_at:
           type: string
@@ -565,6 +597,6 @@ components:
             type: string
           example: ["/images/なんちゃか"]
       required:
+        - id
         - author
         - shop
-        - rating
