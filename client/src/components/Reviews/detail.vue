@@ -3,6 +3,7 @@
     class="pt-2 pb-2 overflow-y-scroll d-inline-block"
     style="-ms-overflow-style: none; scrollbar-width: none"
     height="100%"
+    width="100%"
     :items="items"
     @load="load"
   >
