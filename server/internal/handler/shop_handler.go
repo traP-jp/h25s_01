@@ -84,7 +84,7 @@ type APIV1ShopsPostRequest struct {
 
 	PostCode string `json:"post_code,omitempty"`
 
-	Address string `json:"address"`
+	Address string `json:"address",omitempty`
 
 	Latitude float64 `json:"latitude,omitempty"`
 

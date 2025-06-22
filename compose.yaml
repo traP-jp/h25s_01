@@ -10,6 +10,12 @@ services:
       NS_MARIADB_HOSTNAME: db
       NS_MARIADB_PORT: "3306"
       NS_MARIADB_DATABASE: app
+      AWS_ACCESS_KEY_ID: admin
+      AWS_SECRET_ACCESS_KEY: password
+      AWS_S3_BUCKET: my-bucket
+      AWS_ENDPOINT_URL: http://minio:9000
+      AWS_S3_FORCE_PATH_STYLE: "true"
+      DEBUG: "true"
     depends_on:
       db:
         condition: service_healthy
