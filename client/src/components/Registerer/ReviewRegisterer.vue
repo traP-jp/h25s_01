@@ -46,6 +46,26 @@
               variant="outlined"
             />
 
+            <div class="d-flex flex-col ga-4">
+              <v-checkbox v-model="doRate" label="評価を付ける" />
+
+              <v-slider
+                :min="1"
+                :max="3"
+                v-model="rating"
+                :ticks="tickLabels"
+                thumb-label="always"
+                show-ticks="always"
+                step="1"
+                :disabled="!doRate"
+                tick-size="2"
+              >
+                <template #thumb-label="{ modelValue }">
+                  {{ satisfactionEmojis[modelValue - 1] }}
+                </template>
+              </v-slider>
+            </div>
+
             <v-textarea color="secondary" label="投稿内容" variant="outlined" />
 
             <v-file-upload
@@ -60,7 +80,8 @@
               variant="compact"
             >
               <template #title>
-                <p class="text-secondaryText">画像を追加</p></template>
+                <p class="text-secondaryText">画像を追加</p></template
+              >
 
               <template #item="{ props: files }">
                 <v-file-upload-item
@@ -96,8 +117,13 @@
 
 <script setup>
   import { Icon } from '@iconify/vue'
-  import { shallowRef } from 'vue'
+  import { ref, shallowRef } from 'vue'
 
   import { VFileUpload, VFileUploadItem } from 'vuetify/labs/VFileUpload'
   const model = shallowRef(null)
+
+  const rating = ref(2)
+  const doRate = ref(false)
+
+  const satisfactionEmojis = ['\uD83D\uDE22', '\uD83D\uDE42', '\uD83D\uDE0A']
 </script>
