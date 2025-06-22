@@ -2,7 +2,7 @@
   <v-app-bar class="pl-2 w-screen" color="primary" :elevation="0">
     <template #prepend>
       <v-btn icon href="/">
-        <Icon height="3rem" icon="academicons:ceur-square" :ssr="true" />
+        <v-img height="2.5rem" rel="icon" src="@/assets/icon.svg" width="2.5rem" />
       </v-btn>
     </template>
 
