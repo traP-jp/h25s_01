@@ -95,7 +95,7 @@ func (h *ReviewHandler) GetReviews(c echo.Context) error {
 
 	before, err := time.Parse(time.RFC3339, c.QueryParam("before"))
 	if err != nil {
-		before = time.Now()
+		before = time.Time{}
 	}
 
 	shopID, err := uuid.Parse(c.QueryParam("shop_id"))
