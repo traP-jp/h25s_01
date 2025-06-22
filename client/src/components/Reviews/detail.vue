@@ -9,7 +9,7 @@
   >
     <template v-for="item in items" :key="item.id">
       <v-card class="pl-0" :elevation="0" style="min-height: max-content">
-        <v-container class="ml-2 mr-2 pl-0 pr-0">
+        <v-container class="ml-5 mr-2 pl-0 pr-0">
           <v-row>
             <v-col class="v-col-auto pl-0 pr-0 pt-0">
               <v-img
