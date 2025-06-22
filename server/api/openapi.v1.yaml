@@ -195,36 +195,46 @@ paths:
                   example: "お好み焼き 佐竹"
                 post_code:
                   type: string
-                  example: "1450062"
+                  example: "145-0062"
                 address:
                   type: string
                   example: "東京都大田区北千束１丁目５１−６"
                 latitude:
-                  type: string
-                  example: "35.60832907796818"
+                  type: number
+                  example: 35.60832907796818
                 longitude:
-                  type: string
-                  example: "139.68523096932873"
+                  type: number
+                  example: 139.68523096932873
                 images:
                   type: array
                   items:
                     type: string
+                  example:
+                    [
+                      "019793b9-01c7-7a66-b147-0016dfad1cde",
+                      "019793b9-01c7-7241-9435-2583982a7bca",
+                    ]
                 payment_methods:
                   type: array
                   items:
                     type: string
-                    format: uuid
+                  example: [ "PayPay", "Visa", "現金" ]
                 stations:
                   type: array
                   items:
                     type: string
                     format: uuid
+                  example:
+                    [
+                      "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                      "b2c3d4e5-f6g7-8901-ijkl-mn2345678901",
+                    ]
                   description: "関連する駅のID配列"
                 registerer:
                   type: string
+                  example: "howard127"
               required:
                 - name
-                - address
       responses:
         "201":
           description: 作成された店舗
