@@ -1,5 +1,5 @@
 <template>
-  <div class="pl-4 pr-4" style="max-width: 500px">
+  <div class="pr-4" style="max-width: 500px">
     <p class="text-primary">Timeline</p>
 
     <v-divider
