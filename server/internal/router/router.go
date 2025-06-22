@@ -13,6 +13,7 @@ func NewRouter(
 	shopHandler *handler.ShopHandler,
 	reviewHandler *handler.ReviewHandler,
 	stationHandler *handler.StationHandler,
+	fileHandler *handler.FileHandler,
 ) *echo.Echo {
 	e := echo.New()
 
@@ -29,7 +30,13 @@ func NewRouter(
 	})
 
 	api := e.Group("/api/v1")
+	api.Use(handler.UserIDMiddleware)
 	{
+		images := api.Group("/images")
+		{
+			images.GET("/:id", fileHandler.GetImage)
+		}
+
 		shops := api.Group("/shops")
 		{
 			shops.GET("", shopHandler.GetShops)
@@ -60,7 +67,6 @@ func NewRouter(
 			stations.DELETE("/:id", stationHandler.DeleteStation)
 			stations.GET("/:id/shops", stationHandler.GetShopAroundStation)
 		}
-
 	}
 
 	return e

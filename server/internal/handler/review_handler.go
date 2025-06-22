@@ -95,7 +95,7 @@ func (h *ReviewHandler) GetReviews(c echo.Context) error {
 
 	before, err := time.Parse(time.RFC3339, c.QueryParam("before"))
 	if err != nil {
-		before = time.Now()
+		before = time.Time{}
 	}
 
 	shopID, err := uuid.Parse(c.QueryParam("shop_id"))
@@ -103,7 +103,7 @@ func (h *ReviewHandler) GetReviews(c echo.Context) error {
 		shopID = uuid.Nil
 	}
 
-	userID := c.QueryParam("user_id")
+	userID := c.QueryParam("author_id")
 
 	reviews, err := h.reviewRepo.FindRecentReviews(
 		c.Request().Context(),
@@ -244,7 +244,7 @@ func (h *ReviewHandler) UpdateReview(c echo.Context) error {
 
 	review, err := h.reviewRepo.FindByID(c.Request().Context(), id)
 	if err != nil {
-		return err
+		return errorResponse(c, http.StatusNotFound, "Review not found")
 	}
 
 	review.Author = model.UserID(userID)
