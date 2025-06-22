@@ -36,18 +36,18 @@
   <v-navigation-drawer v-model="drawer" location="right" temporary>
     <v-list-item link title="Top" href="/" />
     <v-list-item link title="Timeline" href="/timeline" />
-    <v-list-item link title="Shops" href="/shops" />
+    <v-list-item link title="Shops" href="/shop" />
   </v-navigation-drawer>
 </template>
 
 <script setup>
-  import { Icon } from '@iconify/vue'
-  import { ref, watch } from 'vue'
+import { Icon } from '@iconify/vue'
+import { ref, watch } from 'vue'
 
-  const drawer = ref(false)
-  const group = ref(null)
+const drawer = ref(false)
+const group = ref(null)
 
-  watch(group, () => {
-    drawer.value = false
-  })
+watch(group, () => {
+  drawer.value = false
+})
 </script>
