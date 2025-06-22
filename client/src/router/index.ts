@@ -4,10 +4,10 @@
  * Automatic routes for `./src/pages/*.vue`
  */
 
-// Composables
-import { createRouter, createWebHistory } from 'vue-router/auto'
 import { setupLayouts } from 'virtual:generated-layouts'
-import { routes } from 'vue-router/auto-routes'
+// Composables
+import { createRouter, createWebHistory } from 'vue-router'
+import { handleHotUpdate, routes } from './routes'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,5 +32,9 @@ router.onError((err, to) => {
 router.isReady().then(() => {
   localStorage.removeItem('vuetify:dynamic-reload')
 })
+
+if (import.meta.hot) {
+  handleHotUpdate(router)
+}
 
 export default router
