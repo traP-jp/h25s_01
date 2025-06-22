@@ -18,52 +18,10 @@ type ShopHandler struct {
 	fileRepo repository.FileRepository
 }
 
-type ShopDto struct {
-	ID             string    `json:"id"`
-	Name           string    `json:"name"`
-	Stations       []string  `json:"stations,omitempty"`
-	PostCode       string    `json:"post_code,omitempty"`
-	Address        string    `json:"address,omitempty"`
-	Latitude       float64   `json:"latitude,omitempty"`
-	Longitude      float64   `json:"longitude,omitempty"`
-	Images         []string  `json:"images,omitempty"`
-	PaymentMethods []string  `json:"payment_methods,omitempty"`
-	Registerer     string    `json:"registerer,omitempty"`
-	CreatedAt      time.Time `json:"created_at,omitempty"`
-	UpdatedAt      time.Time `json:"updated_at,omitempty"`
-}
-
 func NewShopHandler(shopRepo repository.ShopRepository, fileRepo repository.FileRepository) *ShopHandler {
 	return &ShopHandler{
 		shopRepo: shopRepo,
 		fileRepo: fileRepo,
-	}
-}
-
-func FromModelShop(s *model.Shop) *ShopDto {
-	stations := make([]string, len(s.Stations))
-	for i, station := range s.Stations {
-		stations[i] = station.String()
-	}
-
-	images := make([]string, len(s.Images))
-	for i, img := range s.Images {
-		images[i] = img.Path
-	}
-
-	return &ShopDto{
-		ID:             s.ID.String(),
-		Name:           string(s.Name),
-		Stations:       stations,
-		Address:        s.Address,
-		PostCode:       string(s.PostCode),
-		Latitude:       s.Latitude,
-		Longitude:      s.Longitude,
-		Images:         images,
-		PaymentMethods: s.PaymentMethods,
-		Registerer:     string(s.Registerer),
-		CreatedAt:      s.CreatedAt,
-		UpdatedAt:      s.UpdatedAt,
 	}
 }
 
