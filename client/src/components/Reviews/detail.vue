@@ -1,20 +1,21 @@
 <template>
   <v-infinite-scroll
-    class="pt-2 pb-2"
-    :items="items"
+    class="pt-2 pb-2 overflow-y-scroll"
     style="-ms-overflow-style: none; scrollbar-width: none"
+    height="100%"
+    :items="items"
     @load="load"
   >
     <template v-for="item in items" :key="item">
-      <v-card :elevation="0" class="pl-0">
+      <v-card class="pl-0" :elevation="0" style="min-height: max-content">
         <v-container class="ml-2 mr-2 pl-0 pr-0">
           <v-row>
             <v-col class="v-col-auto pl-0 pr-0 pt-0">
               <v-img
                 class="rounded-circle"
-                width="2.8rem"
                 cover
                 src="https://q.trap.jp/api/v3/public/icon/howard127"
+                width="2.8rem"
               />
             </v-col>
 
@@ -47,7 +48,7 @@
 <script setup>
   import { ref } from 'vue'
 
-  const items = ref(Array.from({ length: 30 }, (k, v) => v + 1))
+  const items = ref(Array.from({ length: 1 }, (k, v) => v + 1))
 
   async function api() {
     return new Promise((resolve) => {

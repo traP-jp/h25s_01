@@ -1,11 +1,12 @@
 <template>
-  <v-main>
+  <AppHeader />
+
+  <v-main height="90vh">
     <router-view />
   </v-main>
 
+  <ReviewRegisterer />
   <AppFooter />
 </template>
 
-<script lang="ts" setup>
-  //
-</script>
+<script lang="ts" setup />
