@@ -276,6 +276,11 @@ func (h *ShopHandler) CreateShop(c echo.Context) error {
 		return errorResponse(c, http.StatusBadRequest, "Invalid registerer user ID")
 	}
 
+	userID, err := GetUserID(c)
+	if err != nil || userID != req.Registerer {
+		return errorResponse(c, http.StatusForbidden, "Unauthorized: Registerer user ID does not match the authenticated user")
+	}
+
 	// Convert string image paths to ImageFile objects
 	images := make([]model.ImageFile, len(req.Images))
 	for i, imgPath := range req.Images {
