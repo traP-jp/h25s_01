@@ -1,6 +1,6 @@
 <template>
   <v-infinite-scroll
-    class="pt-2 pb-2 overflow-y-scroll"
+    class="pt-2 pb-2 overflow-y-scroll d-inline-block"
     style="-ms-overflow-style: none; scrollbar-width: none"
     height="100%"
     :items="items"
@@ -48,14 +48,12 @@
 <script setup>
   import { ref } from 'vue'
 
-  const items = ref(Array.from({ length: 1 }, (k, v) => v + 1))
+  const items = ref(Array.from({ length: 10 }, (k, v) => v + 1))
 
   async function api() {
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve(
-          Array.from({ length: 10 }, (k, v) => v + items.value.at(-1) + 1)
-        )
+        resolve(Array.from({ length: 1 }, (k, v) => v + items.value.at(-1) + 1))
       }, 1000)
     })
   }
