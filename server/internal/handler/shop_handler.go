@@ -246,8 +246,7 @@ func (h *ShopHandler) GetShops(c echo.Context) error {
         offset = 0
     }
 
-
-	shops, err := h.shopRepo.FindAll(c.Request().Context())
+	shops, err := h.shopRepo.FindAllWithLimit(c.Request().Context(), limit, offset)
 	if err != nil {
 		return errorResponse(c, http.StatusInternalServerError, err.Error())
 	}
