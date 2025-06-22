@@ -2,6 +2,7 @@
   <div class="fab-container">
     <v-fab
       absolute
+      app
       class="w-100"
       color="primary"
       :elevation="2"
@@ -16,7 +17,7 @@
 
 <style scoped>
   .fab-container {
-    position: relative;
+    /* position: relative; */
     margin: 0 30px 50px;
   }
 </style>
