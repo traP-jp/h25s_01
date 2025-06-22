@@ -469,3 +469,48 @@ WHERE shop_id = ?
 
 	return paymentMethods, nil
 }
+
+func (r *ShopRepositoryImpl) FindAllWithLimit(ctx context.Context, limit int, offset int) ([]*model.Shop, error) {
+	query := `
+	SELECT *
+	FROM shops
+	LIMIT ? OFFSET ?
+`
+
+	var dtos []ShopDto
+	err := r.db.SelectContext(ctx, &dtos, query, limit, offset)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get shops with limit: %w", err)
+	}
+
+	shops := make([]*model.Shop, 0, len(dtos))
+	for _, dto := range dtos {
+		shopID, err := uuid.Parse(dto.ID)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse shop ID: %w", err)
+		}
+
+		stations, err := r.getShopStations(ctx, shopID)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get shop stations: %w", err)
+		}
+
+		images, err := r.getShopImages(ctx, shopID)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get shop images: %w", err)
+		}
+
+		paymentMethods, err := r.getShopPaymentMethods(ctx, shopID)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get shop payment methods: %w", err)
+		}
+
+		shop, err := dto.ToModel(stations, images, paymentMethods)
+		if err != nil {
+			return nil, fmt.Errorf("failed to convert DTO to model: %w", err)
+		}
+		shops = append(shops, shop)
+	}
+
+	return shops, nil
+}
