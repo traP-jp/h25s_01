@@ -1,8 +1,13 @@
 <template>
   <v-app-bar class="pl-2 w-screen" color="primary" :elevation="0">
     <template #prepend>
-      <v-btn icon href="/">
+      <v-btn class="hidden-sm-and-up" icon href="/">
         <v-img height="2.5rem" rel="icon" src="@/assets/icon.svg" width="2.5rem" />
+      </v-btn>
+
+      <v-btn class="hidden-xs" href="/">
+        <v-img height="2.5rem" rel="icon" src="@/assets/icon.svg" width="2.5rem" />
+        <v-img height="2.5rem" rel="icon" src="@/assets/logo.png" width="8rem" />
       </v-btn>
     </template>
 
