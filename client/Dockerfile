@@ -12,10 +12,12 @@ COPY . .
 RUN npm run build
 
 # Production stage
-FROM nginx:alpine
+FROM caddy:alpine
 
-COPY --from=builder /app/dist /usr/share/nginx/html
+COPY --from=builder /app/dist /srv
+
+COPY ./docker/Caddyfile /etc/caddy/Caddyfile
 
 EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
