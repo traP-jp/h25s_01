@@ -418,8 +418,6 @@ paths:
             schema:
               type: object
               properties:
-                author:
-                  type: string
                 shop:
                   type: string
                   format: uuid

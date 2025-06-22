@@ -66,8 +66,6 @@ func (d *Review) FromModel(r *model.Review) {
 }
 
 type APIV1ReviewsPostRequest struct {
-	Author string `json:"author"`
-
 	Shop string `json:"shop"`
 
 	Rating int32 `json:"rating"`
@@ -138,10 +136,6 @@ func (h *ReviewHandler) CreateReview(c echo.Context) error {
 	userID, err := GetUserID(c)
 	if err != nil {
 		return errorResponse(c, http.StatusUnauthorized, "Unauthorized: Failed to get user ID")
-	}
-
-	if err := validateAuthor(userID, req.Author); err != nil {
-		return errorResponse(c, http.StatusForbidden, err.Error())
 	}
 
 	shopID, err := parseShopID(req.Shop)
@@ -217,10 +211,6 @@ func (h *ReviewHandler) UpdateReview(c echo.Context) error {
 	userID, err := GetUserID(c)
 	if err != nil {
 		return errorResponse(c, http.StatusInternalServerError, "Failed to get user ID")
-	}
-
-	if err := validateAuthor(userID, req.Author); err != nil {
-		return errorResponse(c, http.StatusForbidden, err.Error())
 	}
 
 	shopID, err := parseShopID(req.Shop)
