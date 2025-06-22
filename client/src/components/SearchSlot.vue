@@ -1,5 +1,5 @@
 <template>
-  <v-combobox
+  <v-autocomplete
     clear-icon="mdi-close"
     clearable
     class="ml-3"
@@ -26,7 +26,7 @@
         さがす
       </v-btn>
     </template>
-  </v-combobox>
+  </v-autocomplete>
 </template>
 
 <script setup></script>
