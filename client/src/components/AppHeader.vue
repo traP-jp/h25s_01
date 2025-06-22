@@ -36,7 +36,7 @@
   <v-navigation-drawer v-model="drawer" location="right" temporary>
     <v-list-item link title="Top" href="/" />
     <v-list-item link title="Timeline" href="/timeline" />
-    <v-list-item link title="Shops" href="/shops" />
+    <v-list-item link title="Shops" href="/shop" />
   </v-navigation-drawer>
 </template>
 
