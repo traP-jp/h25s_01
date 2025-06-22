@@ -125,10 +125,10 @@
   // 評価をテキストに変換
   function getRatingText(rating) {
     const ratingMap = {
-      0: '★☆☆☆',
-      1: '★★☆☆',
-      2: '★★★☆',
-      3: '★★★★',
+      0: '',
+      1: '★☆☆',
+      2: '★★☆',
+      3: '★★★',
     }
     return ratingMap[rating] || '☆☆☆☆'
   }
