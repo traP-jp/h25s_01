@@ -6,13 +6,14 @@
     :items="items"
     @load="load"
   >
-    <template v-for="item in items" :key="item">
+    <template v-for="item in items" :key="item.id">
       <v-card
         class="pl-0"
         width="80vw"
         max-width="350px"
         :elevation="0"
         style="min-height: max-content"
+        @click="navigateToShop(item.id)"
       >
         <div
           style="
@@ -26,21 +27,21 @@
           <v-img
             cover
             height="100%"
-            src="https://cdn.vuetifyjs.com/images/cards/house.jpg"
+            :src="getImageUrl(item.images?.[0])"
             style="grid-row: 1 / 3; grid-column: 1 / 2; object-fit: cover"
             width="100%"
           />
           <v-img
             cover
             height="100%"
-            src="https://cdn.vuetifyjs.com/images/cards/house.jpg"
+            :src="getImageUrl(item.images?.[1])"
             style="grid-row: 1 / 2; grid-column: 2 / 3; object-fit: cover"
             width="100%"
           />
           <v-img
             cover
             height="100%"
-            src="https://cdn.vuetifyjs.com/images/cards/house.jpg"
+            :src="getImageUrl(item.images?.[2])"
             style="grid-row: 2 / 3; grid-column: 2 / 3; object-fit: cover"
             width="100%"
           />
@@ -48,11 +49,11 @@
 
         <v-card class="pl-0">
           <v-card-title>
-            <p class="color text-text text-caption left">お店の名前</p>
+            <p class="color text-text text-caption left">{{ item.name }}</p>
           </v-card-title>
           <v-card-subtitle>
             <p class="color text-secondary text-caption left">
-              ○○駅周辺 / text text / text text
+              {{ getStationNames(item.stations) }} / {{ item.address }}
             </p>
           </v-card-subtitle>
         </v-card>
@@ -62,22 +63,90 @@
 </template>
 
 <script setup>
-  import { ref } from 'vue'
+  import { ref, onMounted } from 'vue'
+  import { useRouter } from 'vue-router'
 
-  const items = ref(Array.from({ length: 2 }, (k, v) => v + 1))
+  const router = useRouter()
+  const items = ref([])
+  const stations = ref([])
+  const allShops = ref([])
+  const currentIndex = ref(0)
+  const pageSize = 10
 
-  async function api() {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(Array.from({ length: 5 }, (k, v) => v + items.value.at(-1) + 1))
-      }, 1000)
-    })
+  // 駅データを取得
+  async function fetchStations() {
+    try {
+      const res = await fetch('/api/v1/stations')
+      if (!res.ok) throw new Error('Failed to fetch stations')
+      stations.value = await res.json()
+    } catch (error) {
+      console.error('Error fetching stations:', error)
+    }
+  }
+
+  // 店舗データを取得
+  async function fetchShops() {
+    try {
+      const res = await fetch('/api/v1/shops')
+      if (!res.ok) throw new Error('Failed to fetch shops')
+      allShops.value = await res.json()
+
+      // 初期表示分をitemsに設定
+      items.value = allShops.value.slice(0, pageSize)
+      currentIndex.value = pageSize
+    } catch (error) {
+      console.error('Error fetching shops:', error)
+    }
+  }
+
+  // 画像URLを取得
+  function getImageUrl(imageId) {
+    if (!imageId) {
+      return 'https://cdn.vuetifyjs.com/images/cards/house.jpg'
+    }
+    return `/api/v1/images/${imageId}`
+  }
+
+  // 駅名を取得
+  function getStationNames(stationIds) {
+    if (!stationIds || stationIds.length === 0) {
+      return '○○駅周辺'
+    }
+
+    const stationNames = stationIds
+      .map((id) => {
+        const station = stations.value.find((s) => s.id === id)
+        return station ? station.name : ''
+      })
+      .filter((name) => name)
+
+    return stationNames.length > 0
+      ? `${stationNames.join(', ')}周辺`
+      : '○○駅周辺'
+  }
+
+  // 店舗詳細ページに遷移
+  function navigateToShop(shopId) {
+    router.push(`/shop/${shopId}`)
   }
 
   async function load({ done }) {
-    // Perform API call
-    const res = await api()
-    items.value.push(...res)
+    // 次のページのデータを取得
+    const nextItems = allShops.value.slice(
+      currentIndex.value,
+      currentIndex.value + pageSize
+    )
+
+    if (nextItems.length > 0) {
+      items.value.push(...nextItems)
+      currentIndex.value += pageSize
+    }
+
     done('ok')
   }
+
+  onMounted(async () => {
+    await fetchStations()
+    await fetchShops()
+  })
 </script>

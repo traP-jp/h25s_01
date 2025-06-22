@@ -126,11 +126,11 @@
   function getRatingText(rating) {
     const ratingMap = {
       0: '',
-      1: '★☆☆',
-      2: '★★☆',
-      3: '★★★',
+      1: '😓',
+      2: '😑',
+      3: '😄',
     }
-    return ratingMap[rating] || '☆☆☆☆'
+    return ratingMap[rating] || ''
   }
 
   // 時間をフォーマット

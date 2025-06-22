@@ -14,11 +14,9 @@
 
     <div
       class="text-caption text-disabled"
-      style="position: absolute; right: 16px"
+      style="position: absolute; right: 5rem"
     >
-      &copy; 2016-{{ new Date().getFullYear() }}
-      <span class="d-none d-sm-inline-block">Vuetify, LLC</span>
-      —
+      traP 25spring 01 —
       <a
         class="text-decoration-none on-surface"
         href="https://vuetifyjs.com/about/licensing/"

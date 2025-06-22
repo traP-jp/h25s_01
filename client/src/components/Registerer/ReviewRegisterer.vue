@@ -69,7 +69,7 @@
             <v-textarea color="secondary" label="投稿内容" variant="outlined" />
 
             <v-file-upload
-              v-model="model"
+              v-model="images"
               class="mb-3"
               clearable
               color="text-color"
@@ -105,7 +105,13 @@
 
         <v-card-actions class="mb-2">
           <v-spacer />
-          <v-btn class="me-4 bg-primary" rounded type="submit" width="8rem">
+          <v-btn
+            class="me-4 bg-primary"
+            rounded
+            type="submit"
+            width="8rem"
+            @click="postReview()"
+          >
             投稿する
           </v-btn>
           <v-spacer />
@@ -120,10 +126,20 @@
   import { ref, shallowRef } from 'vue'
 
   import { VFileUpload, VFileUploadItem } from 'vuetify/labs/VFileUpload'
-  const model = shallowRef(null)
+  const images = shallowRef(null)
 
   const rating = ref(2)
   const doRate = ref(false)
 
   const satisfactionEmojis = ['\uD83D\uDE22', '\uD83D\uDE42', '\uD83D\uDE0A']
+
+  async function postReview() {
+    const rating = doRate.value ? rating.value : 0
+
+    const shops = await fetch('api/v1/shop')
+
+    const response = await fetch('/api/v1/reviews', {
+      body: JSON.stringify({ author: 'trap', shop: 'shops' }),
+    })
+  }
 </script>
