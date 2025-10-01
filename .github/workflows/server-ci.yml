@@ -21,7 +21,7 @@ jobs:
         working-directory: ./server
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v6
         with:
           go-version-file: ./server/go.mod
           cache-dependency-path: ./server/go.sum
@@ -40,7 +40,7 @@ jobs:
       - build
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v6
         with:
           go-version-file: ./server/go.mod
           cache-dependency-path: ./server/go.sum
@@ -60,7 +60,7 @@ jobs:
   #      - build
   #    steps:
   #      - uses: actions/checkout@v4
-  #      - uses: actions/setup-go@v5
+  #      - uses: actions/setup-go@v6
   #        with:
   #          go-version-file: ./server/go.mod
   #      - name: Unit test with xc
@@ -76,7 +76,7 @@ jobs:
   #      - build
   #    steps:
   #      - uses: actions/checkout@v4
-  #      - uses: actions/setup-go@v5
+  #      - uses: actions/setup-go@v6
   #        with:
   #          go-version-file: ./server/go.mod
   #      - name: Integration test with xc
