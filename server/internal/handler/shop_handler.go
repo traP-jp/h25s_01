@@ -7,6 +7,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"time"
+	"strconv"
 
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/google/uuid"
@@ -235,7 +236,17 @@ func (h *ShopHandler) Delete(c echo.Context) error {
 	})
 }
 func (h *ShopHandler) GetShops(c echo.Context) error {
-	shops, err := h.shopRepo.FindAll(c.Request().Context())
+
+    limit, err := strconv.Atoi(c.QueryParam("limit"))
+    if err != nil || limit <= 0 {
+        limit = 30 
+    }
+    offset, err := strconv.Atoi(c.QueryParam("offset"))
+    if err != nil || offset < 0 {
+        offset = 0
+    }
+
+	shops, err := h.shopRepo.FindAllWithLimit(c.Request().Context(), limit, offset)
 	if err != nil {
 		return errorResponse(c, http.StatusInternalServerError, err.Error())
 	}
